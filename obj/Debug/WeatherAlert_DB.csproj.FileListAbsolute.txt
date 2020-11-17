@@ -1,0 +1,16 @@
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\bin\Debug\WeatherAlert_DB.exe.config
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\bin\Debug\WeatherAlert_DB.exe
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\bin\Debug\WeatherAlert_DB.pdb
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.csprojAssemblyReference.cache
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\MainWindow.g.cs
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\App.g.cs
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB_MarkupCompile.cache
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB_MarkupCompile.lref
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\MainWindow.baml
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.g.resources
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.Properties.Resources.resources
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.csproj.GenerateResource.cache
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.csproj.CoreCompileInputs.cache
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.exe
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.pdb
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\App.baml

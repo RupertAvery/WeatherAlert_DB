@@ -13,4 +13,4 @@ C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.csproj.Gen
 C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.csproj.CoreCompileInputs.cache
 C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.exe
 C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\WeatherAlert_DB.pdb
-C:\Users\Vlemi\source\repos\WeatherAlert_DB\obj\Debug\App.baml
+C:\Users\Vlemi\source\repos\WeatherAlert_DB\bin\Debug\Alert_DB.db

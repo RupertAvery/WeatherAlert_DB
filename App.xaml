@@ -5,14 +5,14 @@
              StartupUri="MainWindow.xaml">
     
     <Application.Resources>
-        <Style x:Key = "TriggerStyle" TargetType = "Button">
+        <!--<Style x:Key = "TriggerStyle" TargetType = "Button">
             <Setter Property = "Foreground" Value = "DarkGreen" />
             <Style.Triggers>
                 <Trigger Property ="IsPressed"  Value = "True">
                     <Setter Property = "Foreground" Value = "Red" />
                 </Trigger>
             </Style.Triggers>
-        </Style>
+        </Style>-->
     </Application.Resources>
     
 </Application>

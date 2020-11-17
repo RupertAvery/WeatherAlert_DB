@@ -5,13 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WeatherAlert_DB"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Weather Alert DB Viewer" Height="500" Width="700" MinHeight="500" MinWidth="400">
+    <Window.Resources>
+        <ControlTemplate x:Key="TabItemTemplate" TargetType="TabItem">
+            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </ControlTemplate>
 
-    <Grid>
-        <StackPanel>
-            <Button Content = "Button1" Style = "{StaticResource TriggerStyle}"/>
-            <Button Content = "Button2" Style = "{StaticResource TriggerStyle}"/>
-            <Button Content = "Button3" Style = "{StaticResource TriggerStyle}"/>
-        </StackPanel>
+        <Style x:Key = "MenuTriggerStyle" TargetType = "TabControl">
+            <Setter Property ="Background"  Value = "#FFDEDEDE"/>
+            <Style.Triggers>
+                <Trigger Property ="AllowDrop"  Value ="True">
+                    <Setter Property = "Foreground" Value = "Red"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="3,3,3,3">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="41*" MinHeight="300"/>
+            <RowDefinition MinHeight="100" Height="100"/>
+        </Grid.RowDefinitions>
+
+        
+        <TabControl Grid.Row="0" Style="{StaticResource MenuTriggerStyle}" Margin="0,0,0,10">
+            <TabItem Header="Event View" Grid.Row="0">
+                <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="600" Margin="36,0,36,75" Grid.Row="0"/>
+                </TabItem>
+            <TabItem Header="Graph View" Grid.Row="0"/>
+        </TabControl>
+        <Button Content="Database Options" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Height="20" Width="98" />
+        <DockPanel Grid.Row="1" Margin="0,0,0,0">
+            <GroupBox BorderThickness="1" BorderBrush="Gray" Header="Zip Code Scanner" Margin="0,-8,0,0" Background="#FFD8D8D8"/>
+        </DockPanel>
+                   
+
     </Grid>
 </Window>

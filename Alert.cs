@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace WeatherAlert_DB
 {
     /// <summary>
-    /// This class constructs an Alert Object and includes sever. 
+    /// This class includes methods to convert the raw json info from the API to construct Alert Objects.
     /// </summary>
     class Alert
     {
@@ -40,23 +40,23 @@ namespace WeatherAlert_DB
         /// <summary>
         /// Converts the raw Date from the API into the correct format for the DB. Json tag: "sent"
         /// </summary>
-        /// <param name="date"></param>
+        /// <param name="sent"></param>
         /// <returns>Truncated Date as a string.</returns>
-        public static string ParseDate(string date)
+        public static string ParseDate(string sent)
         {
-            return date.Substring(0,10);
+            return sent.Substring(0,10);
         }
         /// <summary>
         /// Converts the raw State from the API into the correct format for the DB. Json tag: "senderName"
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="senderName"></param>
         /// <returns>State abbreviation as a string.</returns>
-        public static string ParseState(string state, Dictionary<string, string> stateDictionary)
+        public static string ParseState(string senderName, Dictionary<string, string> stateDictionary)
         {
-            state.Remove(0, 4);
+            senderName.Remove(0, 4);
             string ParsedString = "";
             bool LoopedOnce = false;
-            foreach (char C in state)
+            foreach (char C in senderName)
             {
                 if (C == ' ')
                 {
@@ -67,7 +67,7 @@ namespace WeatherAlert_DB
                     ParsedString += C;
                 }
             }
-            // ParsedString now contains either the full state name OR the states abbreviation. 
+            // ParsedString now contains either the full states name OR the states abbreviation. 
             // Now iterate through the Dictionary to match values and make sure to output the states abbreviation.
             ParsedString = ParsedString.ToUpper();
             foreach (var keyValuePair in stateDictionary)
@@ -77,25 +77,24 @@ namespace WeatherAlert_DB
                 {
                     break;
                 }
-                // Check if State is the Name
+                // Check if State is the full name
                 else if (ParsedString == keyValuePair.Value)
                 {
                     ParsedString = keyValuePair.Key.ToUpper();
                 }
             }
-
             return ParsedString;
         }
         /// <summary>
         /// Converts the raw state into the correct format for the DB. Json tag: "senderName"
         /// </summary>
-        /// <param name="city"></param>
+        /// <param name="senderName"></param>
         /// <returns>Truncated City as a string.</returns>
-        public static string ParseCity(string city)
+        public static string ParseCity(string senderName)
         {
-            city.Remove(0,4);
+            senderName.Remove(0,4);
             string ParsedString = "";
-            foreach (char C in city)
+            foreach (char C in senderName)
             {
                 ParsedString += C;
                 if (C == ' ')
@@ -110,10 +109,10 @@ namespace WeatherAlert_DB
         /// </summary>
         /// <param name="description"></param>
         /// <returns>A string with descriptor words.</returns>
-        public static string ParseDescriptionKeywords(string description)
+        public static string ParseDescriptionKeywords(string NWS_Headline)
         {
             string[] DescriptorWords = { "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM", "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE", "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE" };
-            string[] SeperatedWords = description.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] SeperatedWords = NWS_Headline.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string CombinedDescriptorWords = "";
             foreach (var word in SeperatedWords)
             {

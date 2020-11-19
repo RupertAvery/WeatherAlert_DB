@@ -5,41 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WeatherAlert_DB"
         mc:Ignorable="d"
-        Title="Weather Alert DB Viewer" Height="500" Width="700" MinHeight="500" MinWidth="400">
+        Title="Weather Alert DB Viewer" Height="500" Width="700" MinHeight="500" MinWidth="400" Closing="Window_Closing">
     <Window.Resources>
         <ControlTemplate x:Key="TabItemTemplate" TargetType="TabItem">
             <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         </ControlTemplate>
 
-        <Style x:Key = "MenuTriggerStyle" TargetType = "TabControl">
+        <Style x:Key = "MenuTriggerStyle" TargetType = "TabItem">
             <Setter Property ="Background"  Value = "#FFDEDEDE"/>
             <Style.Triggers>
-                <Trigger Property ="AllowDrop"  Value ="True">
-                    <Setter Property = "Foreground" Value = "Red"/>
+                <Trigger Property = "IsSelected" Value ="True">
+                    <Setter Property = "FontSize" Value = "14"/>
+
+                </Trigger>
+                <Trigger Property="IsSelected" Value="False">
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="Foreground" Value="#FF7A7A7A"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
 
     <Grid Margin="3,3,3,3">
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="41*" MinHeight="300"/>
             <RowDefinition MinHeight="100" Height="100"/>
         </Grid.RowDefinitions>
 
-        
-        <TabControl Grid.Row="0" Style="{StaticResource MenuTriggerStyle}" Margin="0,0,0,10">
-            <TabItem Header="Event View" Grid.Row="0">
-                <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="600" Margin="36,0,36,75" Grid.Row="0"/>
-                </TabItem>
-            <TabItem Header="Graph View" Grid.Row="0"/>
-        </TabControl>
-        <Button Content="Database Options" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Height="20" Width="98" />
-        <DockPanel Grid.Row="1" Margin="0,0,0,0">
-            <GroupBox BorderThickness="1" BorderBrush="Gray" Header="Zip Code Scanner" Margin="0,-8,0,0" Background="#FFD8D8D8"/>
-        </DockPanel>
-                   
 
+        <TabControl Grid.Row="0"  Margin="0,0,0,5" Background="#FFD8D8D8">
+            <TabItem Header="Event View" Grid.Row="0" Style="{StaticResource MenuTriggerStyle}">
+                <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1,1,1,1" Grid.Row="0">
+                    <Button Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Canvas.Left="161" Canvas.Top="141"/>
+                </Canvas>
+            </TabItem>
+            <TabItem Header="Graph View" Grid.Row="0" Style="{StaticResource MenuTriggerStyle}"/>
+        </TabControl>
+        <Button x:Name="DatabaseOptions_Button" Content="Database Options" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Height="20" Width="98" Click="DatabaseOptions_Button_Click" />
+        <!--Zip Code Scanner Section-->
+        <DockPanel Grid.Row="1" Margin="0,0,0,0">
+            <GroupBox BorderThickness="1" BorderBrush="Gray" Header="Zip Code Scanner" Margin="0,-8,0,0" Background="#FFDEDEDE"/>
+        </DockPanel>
     </Grid>
 </Window>

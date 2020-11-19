@@ -1,0 +1,38 @@
+﻿<Window x:Class="WeatherAlert_DB.DatabaseOptions"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherAlert_DB"
+        mc:Ignorable="d"
+        Title="Database Options" Height="175" Width="282" WindowStartupLocation="CenterOwner" MinWidth="200" MinHeight="200">
+
+    <Window.Resources>
+        <Style x:Key = "ButtonStyle" TargetType = "Button">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsChecked,ElementName=DummyDB_Checkbox}" Value="True">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="3,3,3,3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="15"></RowDefinition>
+            <RowDefinition Height="25"></RowDefinition>
+        </Grid.RowDefinitions>
+
+
+
+        <Button x:Name="ImportDB_Button" Content="Import Database" Grid.Row="0" Style="{DynamicResource ButtonStyle}" Click="ImportDB_Button_Click"/>
+        <Button x:Name="ExportDB_Button" Content="Export Database" Grid.Row="1" Style="{DynamicResource ButtonStyle}" Click="ExportDB_Button_Click"/>
+        <Button x:Name="EditDB_Button" Content="EDIT Database" Grid.Row="2" Foreground="Orange" Style="{DynamicResource ButtonStyle}" Click="EditDB_Button_Click"/>
+        <Button x:Name="DeleteDB_Button" Content="DELETE Database" Grid.Row="3" Foreground="Red" Style="{DynamicResource ButtonStyle}" Click="DeleteDB_Button_Click"/>
+        <CheckBox x:Name="DummyDB_Checkbox" Content="Use dummy Database? (DEBUG)" HorizontalAlignment="Center" Margin="2,3,3,3" Grid.Row="5"/>
+    </Grid>
+</Window>

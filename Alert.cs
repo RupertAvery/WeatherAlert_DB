@@ -8,14 +8,14 @@ namespace WeatherAlert_DB
     /// </summary>
     class Alert
     {
-        string Id;
-        string Date;
-        string EventType;
-        string State;
-        string City;
-        string Severity;
-        string NWSHeadline; 
-        string DescriptionKeywords;
+        public string Id;
+        public string Date;
+        public string EventType;
+        public string State;
+        public string City;
+        public string Severity;
+        public string NWSHeadline;
+        public string DescriptionKeywords;
 
         public Alert(string id, string date, string eventType, string state, string city, string serverity, string nwsHeadline, string descriptionKeywords)
         {

@@ -1,0 +1,24 @@
+﻿<Window x:Class="WeatherAlert_DB.AreYouSureDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherAlert_DB"
+        mc:Ignorable="d"
+        Title="Are You Sure Dialog" Height="225" Width="400" Background="#FFDEDEDE" WindowStartupLocation="CenterOwner" MinWidth="400" MinHeight="225">
+
+    <Grid Margin="3,3,3,3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="110"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="PromptUser_Textblock" Text="PLACEHOLDER-TXT" Grid.Row="0" FontSize="18" TextWrapping="Wrap"/>
+        <TextBlock x:Name="WarningTxt_Textblock" Text="" FontSize="16" Grid.Row="1" FontStyle="Italic" TextWrapping="Wrap" Margin="0,25,0,10"/>
+        <DockPanel Grid.Row="2" VerticalAlignment="Bottom" LastChildFill="False" Height="20">
+            <Button x:Name="Action_Button" DockPanel.Dock="Right" Content="Continue" Width="84" Height="20" Click="Action_Button_Click"/>
+            <Button x:Name="Cancel_Button" DockPanel.Dock="Left" Content="Cancel" Width="50" Height="20" Click="Cancel_Button_Click"/>
+        </DockPanel>
+
+    </Grid>
+</Window>

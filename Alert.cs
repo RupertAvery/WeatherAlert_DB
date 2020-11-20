@@ -16,7 +16,6 @@ namespace WeatherAlert_DB
         public string Severity;
         public string NWSHeadline;
         public string DescriptionKeywords;
-
         public Alert(string id, string date, string eventType, string state, string city, string serverity, string nwsHeadline, string descriptionKeywords)
         {
             Id = id;
@@ -111,7 +110,9 @@ namespace WeatherAlert_DB
         /// <returns>A string with descriptor words.</returns>
         public static string ParseDescriptionKeywords(string NWS_Headline)
         {
-            string[] DescriptorWords = { "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM", "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE", "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE" };
+            string[] DescriptorWords = { "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM",
+                                         "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE", 
+                                         "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE" };
             string[] SeperatedWords = NWS_Headline.ToString().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string CombinedDescriptorWords = "";
             foreach (var word in SeperatedWords)
@@ -124,7 +125,8 @@ namespace WeatherAlert_DB
                     }
                 }
             }
-            // Check if the string was assigned any keywords. If not then specifically say its UNKNOWN to prevent a null database entry.
+            // Check if the string was assigned any keywords. 
+            // If not then specifically say its UNKNOWN to prevent a null database entry.
             if (string.IsNullOrEmpty(CombinedDescriptorWords))
             {
                 CombinedDescriptorWords = "UNKNOWN";

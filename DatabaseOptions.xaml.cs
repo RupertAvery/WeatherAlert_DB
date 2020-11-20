@@ -14,6 +14,8 @@ namespace WeatherAlert_DB
         public DatabaseOptions()
         {
             InitializeComponent();
+            // If user is wanting to use the DummyDB Force check this box.
+            if (SQLite_Data_Access.IsUsingDummyDB) { DummyDB_Checkbox.IsChecked = true; }
         }
         private void ImportDB_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -60,7 +62,7 @@ namespace WeatherAlert_DB
             areYouSureDialog.Owner = this;
             if ((bool)areYouSureDialog.ShowDialog())
             {
-                SQLite_Data_Access.UpdateIn_DB();
+                SQLite_Data_Access.UpdateIn_DB("");
                 this.Close();
             }
         }
@@ -75,11 +77,19 @@ namespace WeatherAlert_DB
             areYouSureDialog.Owner = this;     
             if ((bool)areYouSureDialog.ShowDialog())
             {
-                SQLite_Data_Access.DeleteAllIn_DB(SQLite_Data_Access.ConnectionString.MainDB);
+                SQLite_Data_Access.DeleteAllIn_DB();
                 this.Close();
             }
         }
 
-        
+        private void DummyDB_Checkbox_Checked(object sender, RoutedEventArgs e)
+        {
+            SQLite_Data_Access.IsUsingDummyDB = true;
+        }
+
+        private void DummyDB_Checkbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            SQLite_Data_Access.IsUsingDummyDB = false;
+        }
     }
 }

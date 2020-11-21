@@ -1,5 +1,6 @@
 ﻿using System.Windows;
-
+using System;
+using System.Collections.Generic;
 
 namespace WeatherAlert_DB
 {
@@ -12,15 +13,6 @@ namespace WeatherAlert_DB
         {
             InitializeComponent();
 
-            //Degub Code
-            string[] StringsArry = { "@id", "sent", "event","senderName", "severity", "NWSheadline" };
-            var List = NWS_ApiController.ParseReaderStringForKeywords(StringsArry, NWS_ApiController.RequestNWSApi("https://api.weather.gov/alerts/active?status=actual&message_type=alert&certainty=observed"));
-            string tmp = "";
-            foreach (var item in List)
-            {
-                tmp += item.ToString();
-            }
-            MessageBox.Show(tmp);
         }
 
         private void DatabaseOptions_Button_Click(object sender, RoutedEventArgs e)

@@ -6,9 +6,13 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Net;
 
 namespace WeatherAlert_DB
 {
+    /// <summary>
+    /// Used to contact the NWS API.
+    /// </summary>
     class NWS_ApiController
     {
         public static HttpClient client = new HttpClient();
@@ -16,30 +20,41 @@ namespace WeatherAlert_DB
         /// Calls a request to the NWS API.
         /// </summary>
         /// <returns>String with all reader content from the GET/HTTP request.</returns>
-        public static string RequestNWSApi(string httpRequest)
+        private static string RequestNWSApi(string httpRequest)
         {
             // In order to request API access header has to be declared.
             client.DefaultRequestHeaders.UserAgent.Add(System.Net.Http.Headers.ProductInfoHeaderValue.Parse("(Weather_DB107425625345672, NA)"));
+            // Read from GET request 
             try
             {
                 var httpResponse = client.GetStreamAsync(httpRequest);
                 StreamReader rdr = new StreamReader(httpResponse.Result);
                 var content = rdr.ReadToEnd();
+
+                // Log info
+                var Log = new LogHandler("Services requested successfully.");
+                Log.WriteLogFile();
                 return content;
             }
-            catch (HttpRequestException)
+            catch (WebException e)
             {
-                MessageBox.Show("NWS Services currently unavailable. Please try again later.");
-                throw;
+                // Catch the exception and generate a Log entry with the exception 
+                MessageBox.Show("NWS Services currently unavailable." +
+                                 "\nException has been logged." +
+                                 "\nPlease try again later.");
+
+                // Log info
+                var Log = new LogHandler("ERROR: NWS Services could not be requested.", e);
+                Log.WriteLogFile();
+                return "";
             }
             
             
         }
-        public static List<string> ParseReaderStringForKeywords(string[] keywordsToSearchFor, string readerTxt)
+        private static List<string> ParseReaderStringForKeywords(string[] keywordsToSearchFor, string readerTxt)
         {
-            // Split the long Json request in a temp string array.
+            // Split the long Json request in a temp string array. Declare a list to return.
             string[] SplitLines = readerTxt.Split(',');
-            // This is the returned list
             List<string> ReturnedStringList = new List<string>();
 
             // Iterate through the reader info and seperate lines by keywords
@@ -69,6 +84,17 @@ namespace WeatherAlert_DB
                 }
             }
             return ReturnedStringList;
+        }
+        /// <summary>
+        /// Sends a NWS Alert GET request.
+        /// </summary>
+        /// <returns>Filtered List of Alert data.</returns>
+        public static List<string> ReturnApiCall()
+        {
+            // Setup the API request and return the filtered output as a string list for later use.
+            string Request = "https://api.weather.gov/alerts/active?status=actual&message_type=alert&certainty=observed";
+            string[] Keywords = { "@id\":", "sent\":", "event\":", "senderName\":", "severity\":", "NWSheadline\":", "areaDesc\":" };
+            return ParseReaderStringForKeywords(Keywords,RequestNWSApi(Request));
         }
     }
 }

@@ -25,6 +25,10 @@ namespace WeatherAlert_DB
             if (openFileDialog.ShowDialog() == true)
             {
                 throw new System.NotImplementedException("DB Import functionality not implemented yet.");
+
+                // Log info
+                var Log = new LogHandler("DB Import requested.");
+                Log.WriteLogFile();
             }
 
         }
@@ -39,15 +43,23 @@ namespace WeatherAlert_DB
                 {
                     // If user attempts to Overwrite catch it here.
                     File.Copy("Alert_DB.db", saveFileDialog.FileName, false);
+
+                    // Log info
+                    var Log = new LogHandler("Exported DB.");
+                    Log.WriteLogFile();
                 }
-                catch (IOException)
+                catch (IOException exception)
                 {
                     AreYouSureDialog areYouSureDialog = 
-                        new AreYouSureDialog("OPERATION DENIED. \n\n" +
+                        new AreYouSureDialog("OPERATION DENIED. Exception logged. \n\n" +
                                               "Name cannot match or overwrite current DB.", "Ok", 
                                               "Please try a different name or destination.");
                     areYouSureDialog.Owner = this;
                     areYouSureDialog.ShowDialog();
+
+                    // Log info
+                    var Log = new LogHandler("Export DB Denied.", exception);
+                    Log.WriteLogFile();
                 } 
             }
         }
@@ -62,6 +74,10 @@ namespace WeatherAlert_DB
             areYouSureDialog.Owner = this;
             if ((bool)areYouSureDialog.ShowDialog())
             {
+                // Log info
+                var Log = new LogHandler("Edit DB called.");
+                Log.WriteLogFile();
+
                 SQLite_Data_Access.UpdateIn_DB("");
                 this.Close();
             }
@@ -78,6 +94,10 @@ namespace WeatherAlert_DB
             if ((bool)areYouSureDialog.ShowDialog())
             {
                 SQLite_Data_Access.DeleteAllIn_DB();
+
+                // Log info
+                var Log = new LogHandler("WIPED all DB entries.");
+                Log.WriteLogFile();
                 this.Close();
             }
         }
@@ -85,11 +105,19 @@ namespace WeatherAlert_DB
         private void DummyDB_Checkbox_Checked(object sender, RoutedEventArgs e)
         {
             SQLite_Data_Access.IsUsingDummyDB = true;
+
+            // Log info
+            var Log = new LogHandler("Switched to DummyDB.");
+            Log.WriteLogFile();
         }
 
         private void DummyDB_Checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             SQLite_Data_Access.IsUsingDummyDB = false;
+
+            // Log info
+            var Log = new LogHandler("Switched to MainDB.");
+            Log.WriteLogFile();
         }
     }
 }

@@ -125,6 +125,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LogHandler.cs" />
+    <Compile Include="MainLogicHandler.cs" />
     <Compile Include="NWS_ApiController.cs" />
     <Compile Include="SQLite_Data_Access.cs" />
     <Page Include="AreYouSureDialog.xaml">
@@ -173,6 +175,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="AlertDummy.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Alert_DB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

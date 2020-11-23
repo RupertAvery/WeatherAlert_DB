@@ -54,8 +54,21 @@ namespace WeatherAlert_DB
         private static List<string> ParseReaderStringForKeywords(string[] keywordsToSearchFor, string readerTxt)
         {
             // Split the long Json request in a temp string array. Declare a list to return.
-            string[] SplitLines = readerTxt.Split(',');
+            string[] SplitLines = readerTxt.Split('\n');
             List<string> ReturnedStringList = new List<string>();
+
+            // NWSHeadline Parameter is accidently split by the above operation 
+            // so force it to attach itself back to the item in the list above it
+            int CurrentIndex = 0;
+            foreach (var item in SplitLines)
+            {
+                if (item.Contains("NWSheadline\": ["))
+                {
+                    SplitLines[CurrentIndex] += SplitLines[CurrentIndex + 1].ToString();
+                    SplitLines[CurrentIndex + 1] = "";
+                }
+                CurrentIndex++;
+            }
 
             // Iterate through the reader info and seperate lines by keywords
             foreach (var line in SplitLines)
@@ -66,20 +79,23 @@ namespace WeatherAlert_DB
                     {
                         // Extract only the useful information and remove any extra characters before storing in a List.
                         string CleanedLine = "";
+                       
                         foreach (char c in line)
                         {
-                            if (!(c == '"' || c == '\\'|| c == ']' || c == '['))
+                            if (!(c == '"' || c == ']' || c == '['))
                             {
                                 CleanedLine += c;
                             }
                         }
-                        CleanedLine = CleanedLine.Replace("\n", "");
+                        CleanedLine = CleanedLine.Replace(@"\n", " ");
+                        CleanedLine.Trim('\\');
+
                         int NumCharsToDelete = CleanedLine.IndexOf(keyword);
                         if (NumCharsToDelete > 0)
                         {
                             CleanedLine = CleanedLine.Remove(0, NumCharsToDelete);
                         }
-                        ReturnedStringList.Add(CleanedLine.Replace("  ",""));
+                        ReturnedStringList.Add(CleanedLine.Replace("  ","").Trim());
                     }
                 }
             }
@@ -93,7 +109,7 @@ namespace WeatherAlert_DB
         {
             // Setup the API request and return the filtered output as a string list for later use.
             string Request = "https://api.weather.gov/alerts/active?status=actual&message_type=alert&certainty=observed";
-            string[] Keywords = { "@id\":", "sent\":", "event\":", "senderName\":", "severity\":", "NWSheadline\":", "areaDesc\":" };
+            string[] Keywords = { "@id\":", "sent\":", "event\":", "senderName\":", "severity\":", "NWSheadline\":", "areaDesc\":", "description\":" };
             return ParseReaderStringForKeywords(Keywords,RequestNWSApi(Request));
         }
     }

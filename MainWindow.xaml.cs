@@ -12,7 +12,8 @@ namespace WeatherAlert_DB
         public MainWindow()
         {
             InitializeComponent();
-
+            //debug
+            MainLogicHandler.StartApiTimer();
         }
 
         private void DatabaseOptions_Button_Click(object sender, RoutedEventArgs e)

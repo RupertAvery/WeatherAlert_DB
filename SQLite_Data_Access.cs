@@ -45,7 +45,7 @@ namespace WeatherAlert_DB
                 {
                     var Alert = new Alert(rdr.GetString(0), rdr.GetString(1), rdr.GetString(2),
                                            rdr.GetString(3), rdr.GetString(4), rdr.GetString(5),
-                                           rdr.GetString(6), rdr.GetString(7), rdr.GetString(8), rdr.GetString(9));
+                                           rdr.GetString(6), rdr.GetString(7), rdr.GetString(8), rdr.GetString(9), rdr.GetString(10));
                     alerts.Add(Alert);
                 }
                 rdr.Close();
@@ -71,10 +71,11 @@ namespace WeatherAlert_DB
                 CMD.Parameters.AddWithValue("@City", alert.City);
                 CMD.Parameters.AddWithValue("@Severity", alert.Severity);
                 CMD.Parameters.AddWithValue("@NWSHeadline", alert.NWSHeadline);
+                CMD.Parameters.AddWithValue("@Description", alert.Description);
                 CMD.Parameters.AddWithValue("@DescriptionKeywords", alert.DescriptionKeywords);
                 CMD.Parameters.AddWithValue("@AreaDescription", alert.AreaDescription);
-                CMD.CommandText = @"INSERT INTO Alerts (Id,Date,Time,EventType,State,City,Severity,NWSHeadline,DescriptionKeywords,AreaDescription) 
-                                    values (@Id,@Date,@Time,@EventType,@State,@City,@Severity,@NWSHeadline,@DescriptionKeywords,@AreaDescription)";
+                CMD.CommandText = @"INSERT INTO Alerts (Id,Date,Time,EventType,State,City,Severity,NWSHeadline,Description,DescriptionKeywords,AreaDescription) 
+                                    values (@Id,@Date,@Time,@EventType,@State,@City,@Severity,@NWSHeadline,@Description,@DescriptionKeywords,@AreaDescription)";
                 CMD.Connection.Open();
                 CMD.ExecuteNonQuery();
                 CMD.Connection.Close();

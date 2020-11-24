@@ -34,6 +34,13 @@ namespace WeatherAlert_DB
           { "VT", "VERMONT" }, { "VA", "VIRGINIA" }, { "WA", "WASHINGTON" }, { "WV", "WEST VIRGINIA" },
           { "WI", "WISCONSIN" }, { "WY", "WYOMING" }
         };
+        private static string[] DescriptorWords = 
+        {     "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM",
+              "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE",
+              "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE",
+              "SLUSH", "SLUSHY", "ADVISORY", "SLEET", "FREEZING", "CLOUDY",
+              "WATER LEVEL", "WAVE", "SHOWER", "THUNDER", "LIGHTNING"
+        };
         public Alert(string id, string date, string time, string eventType, string state, string city, string severity, string nwsHeadline, string description, string descriptionKeywords, string areaDescription)
         {
             Id = id;
@@ -135,13 +142,8 @@ namespace WeatherAlert_DB
         /// </summary>
         /// <param name="description"></param>
         /// <returns>A string with descriptor words.</returns>
-        public static string ParseForDescriptionKeywords(string description)
+        public static string ParseForDescriptiveKeywords(string description)
         {
-
-            string[] DescriptorWords = { "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM",
-                                         "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE", 
-                                         "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE", 
-                                        "SLUSH", "ADVISORY", "SLEET", "FREEZING", "CLOUDY", "WATER LEVEL" };
 
             string[] SeperatedWords = description.ToString().ToUpper().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string CombinedDescriptorWords = "";
@@ -159,7 +161,7 @@ namespace WeatherAlert_DB
             // If not then specifically say its UNKNOWN to prevent a null database entry.
             if (string.IsNullOrEmpty(CombinedDescriptorWords))
             {
-                CombinedDescriptorWords = "UNKNOWN";
+                CombinedDescriptorWords = "UNKNOWN ";
             }
             return CombinedDescriptorWords;
         }
@@ -170,7 +172,7 @@ namespace WeatherAlert_DB
         /// <returns>Truncated NWSHeadline as a string.</returns>
         public static string ParseNWSHeadline(string NWSheadline)
         {
-            return NWSheadline.Remove(0,26).Trim(',');
+            return NWSheadline.Remove(0,13).Trim(',');
         }
         /// <summary>
         /// Converts the raw Severity into the correct format for the DB. Json tag: "severity"
@@ -193,6 +195,31 @@ namespace WeatherAlert_DB
         public static string ParseAreaDescription(string areaDesc)
         {
             return areaDesc.Remove(0, 10).Trim(',');
+        }
+        /// <summary>
+        /// Takes a string and ensures no duplicate entries were found. Also removes UNKNOWN if entries are found.
+        /// </summary>
+        /// <param name="keywords"></param>
+        /// <returns>Filtered string of Keywords</returns>
+        public static string CleanDescriptiveKeywords(string keywords)
+        {
+            // Check for duplicate keywords and removes them
+            string[] KeywordsArray = keywords.Split(' ');
+            string ReturnedString = "";
+            for (int WordAsIndex = 0; WordAsIndex < KeywordsArray.Length; WordAsIndex++)
+            {
+                if (!ReturnedString.Contains(KeywordsArray[WordAsIndex]))
+                {
+                    ReturnedString += KeywordsArray[WordAsIndex] + " ";
+                }
+            }
+            // Check if string contains more than just the word UNKNOWN.
+            // This prevents outputting UNKNOWN if there are other keywords with it
+            if (ReturnedString.Contains("UNKNOWN") && ReturnedString.Length > 8)
+            {
+                ReturnedString = ReturnedString.Replace("UNKNOWN", "");
+            }
+            return ReturnedString;
         }
     }
 }

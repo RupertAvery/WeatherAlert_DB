@@ -78,8 +78,16 @@ namespace WeatherAlert_DB
                     int NumOfLinesToAdd = CurrentIndex;
                     while (!SplitLines[NumOfLinesToAdd].Contains("],") && NumOfLinesToAdd < SplitLines.Length)
                     {
-                        NumOfLinesToAdd++;
-                        SplitLines[CurrentIndex] += SplitLines[NumOfLinesToAdd].ToString();
+                        if (SplitLines[NumOfLinesToAdd].Contains("DELETED"))
+                        {
+                            ++NumOfLinesToAdd;
+                        }
+                        else
+                        {
+                            ++NumOfLinesToAdd;
+                            SplitLines[CurrentIndex] += SplitLines[NumOfLinesToAdd].ToString();
+                            SplitLines[NumOfLinesToAdd] = "DELETED";
+                        }
                     }
                 }
                 CurrentIndex++;

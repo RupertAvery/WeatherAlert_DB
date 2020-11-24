@@ -16,7 +16,17 @@ namespace WeatherAlert_DB
         // Check if app just started if so force a new Sync request
         private static async void CallApiEvent(Object source, ElapsedEventArgs e)
         {
-            SyncInfoToDB();
+            // Check if user is using DummyDb instead. 
+            // If so prevent API Calls here.
+            if (!SQLite_Data_Access.IsUsingDummyDB)
+            {
+                SyncInfoToDB();
+            }
+            else
+            {
+                LogHandler Log = new LogHandler("Skipped API request: User is using DummyDB instead.");
+                Log.WriteLogFile();
+            }
         }
         /// <summary>
         /// Start an auto resetting timer to request the API.
@@ -29,8 +39,8 @@ namespace WeatherAlert_DB
             ApiTimer.Elapsed += new ElapsedEventHandler(CallApiEvent);
             ApiTimer.Start();
 
-            // Request API initially after content loads
-            Timer ApiTimerStartup = new Timer(2);
+            // Request API on application start after short delay
+            Timer ApiTimerStartup = new Timer(60000);
             ApiTimerStartup.AutoReset = false;
             ApiTimerStartup.Elapsed += new ElapsedEventHandler(CallApiEvent);
             ApiTimerStartup.Start();
@@ -101,6 +111,7 @@ namespace WeatherAlert_DB
                     else if (AlertInfoList[CurrentIndex].StartsWith("description:"))
                     {
                         ValuesForObjectInstantiation[8] = Alert.ParseDescription(AlertInfoList[6]);
+                        ValuesForObjectInstantiation[9] += Alert.ParseForDescriptiveKeywords(AlertInfoList[6]);
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("NWSheadline:"))
@@ -108,8 +119,7 @@ namespace WeatherAlert_DB
                         WasThereA_NwsHeadline = true;
                         // Grab NwsHeadline & DescriptionKeywords
                         ValuesForObjectInstantiation[7] = Alert.ParseNWSHeadline(AlertInfoList[7]);
-                        ValuesForObjectInstantiation[9] = Alert.ParseForDescriptionKeywords(AlertInfoList[7])
-                                                            + " " + Alert.ParseForDescriptionKeywords(AlertInfoList[6]);
+                        ValuesForObjectInstantiation[9] += Alert.ParseForDescriptiveKeywords(AlertInfoList[7]);                           
                         LinesTriggered++;
                     }
                 }
@@ -123,7 +133,7 @@ namespace WeatherAlert_DB
                     Alert alert = new Alert(ValuesForObjectInstantiation[0], ValuesForObjectInstantiation[1],
                         ValuesForObjectInstantiation[2], ValuesForObjectInstantiation[3], ValuesForObjectInstantiation[4],
                         ValuesForObjectInstantiation[5], ValuesForObjectInstantiation[6], ValuesForObjectInstantiation[7],
-                        ValuesForObjectInstantiation[8], ValuesForObjectInstantiation[9], ValuesForObjectInstantiation[10]);
+                        ValuesForObjectInstantiation[8], Alert.CleanDescriptiveKeywords(ValuesForObjectInstantiation[9]), ValuesForObjectInstantiation[10]);
 
                     // Construct the objects and for each skipped object out it to log
                     if (!SQLite_Data_Access.InsertIn_DB(alert))
@@ -149,7 +159,7 @@ namespace WeatherAlert_DB
                     Alert alert = new Alert(ValuesForObjectInstantiation[0], ValuesForObjectInstantiation[1],
                         ValuesForObjectInstantiation[2], ValuesForObjectInstantiation[3], ValuesForObjectInstantiation[4],
                         ValuesForObjectInstantiation[5], ValuesForObjectInstantiation[6], ValuesForObjectInstantiation[7],
-                        ValuesForObjectInstantiation[8], ValuesForObjectInstantiation[9], ValuesForObjectInstantiation[10]);
+                        ValuesForObjectInstantiation[8], Alert.CleanDescriptiveKeywords(ValuesForObjectInstantiation[9]), ValuesForObjectInstantiation[10]);
 
                     // Construct the objects and for each skipped object out it to log
                     if (!SQLite_Data_Access.InsertIn_DB(alert))

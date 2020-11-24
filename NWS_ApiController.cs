@@ -36,6 +36,18 @@ namespace WeatherAlert_DB
                 Log.WriteLogFile();
                 return content;
             }
+            catch (HttpRequestException e)
+            {
+                // Catch the exception and generate a Log entry with the exception 
+                MessageBox.Show("NWS Services currently unavailable." +
+                                 "\nException has been logged." +
+                                 "\nPlease try again later.");
+
+                // Log info
+                var Log = new LogHandler("ERROR: NWS Services could not be requested.", e);
+                Log.WriteLogFile();
+                return "";
+            }
             catch (WebException e)
             {
                 // Catch the exception and generate a Log entry with the exception 
@@ -48,8 +60,6 @@ namespace WeatherAlert_DB
                 Log.WriteLogFile();
                 return "";
             }
-            
-            
         }
         private static List<string> ParseReaderStringForKeywords(string[] keywordsToSearchFor, string readerTxt)
         {
@@ -62,10 +72,15 @@ namespace WeatherAlert_DB
             int CurrentIndex = 0;
             foreach (var item in SplitLines)
             {
-                if (item.Contains("NWSheadline\": ["))
+               
+                if (item.Contains("NWSheadline\": [") && !item.Contains("],"))
                 {
-                    SplitLines[CurrentIndex] += SplitLines[CurrentIndex + 1].ToString();
-                    SplitLines[CurrentIndex + 1] = "";
+                    int NumOfLinesToAdd = CurrentIndex;
+                    while (!SplitLines[NumOfLinesToAdd].Contains("],") && NumOfLinesToAdd < SplitLines.Length)
+                    {
+                        NumOfLinesToAdd++;
+                        SplitLines[CurrentIndex] += SplitLines[NumOfLinesToAdd].ToString();
+                    }
                 }
                 CurrentIndex++;
             }

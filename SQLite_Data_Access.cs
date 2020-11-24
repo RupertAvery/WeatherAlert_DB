@@ -53,35 +53,83 @@ namespace WeatherAlert_DB
                 return alerts;
             }
         }
-        /// <summary>
-        /// INSERT Alert objects in DB.
-        /// </summary>
-        public static void InsertIn_DB(Alert alert)
+       /// <summary>
+       /// Inserts objects in the Database.
+       /// </summary>
+       /// <param name="alert"></param>
+       /// <returns>Returns false if object already exists. If object was added it returns true.</returns>
+        public static bool InsertIn_DB(Alert alert)
         {
+            bool WasObjectAddedToDB;
+            // Check if DB entry already exists
+            if (!DoesObjectAlreadyExist(alert))
+            {
+                using (IDbConnection connection = new SQLiteConnection(LoadConnectionString(ConnectionString.MainDB)))
+                {
+                    SQLiteCommand CMD = new SQLiteCommand();
+                    CMD.Connection = (SQLiteConnection)connection;
+                    CMD.CommandType = CommandType.Text;
+                    CMD.Parameters.AddWithValue("@Id", alert.Id);
+                    CMD.Parameters.AddWithValue("@Date", alert.Date);
+                    CMD.Parameters.AddWithValue("@Time", alert.Time);
+                    CMD.Parameters.AddWithValue("@EventType", alert.EventType);
+                    CMD.Parameters.AddWithValue("@State", alert.State);
+                    CMD.Parameters.AddWithValue("@City", alert.City);
+                    CMD.Parameters.AddWithValue("@Severity", alert.Severity);
+                    CMD.Parameters.AddWithValue("@NWSHeadline", alert.NWSHeadline);
+                    CMD.Parameters.AddWithValue("@Description", alert.Description);
+                    CMD.Parameters.AddWithValue("@DescriptionKeywords", alert.DescriptionKeywords);
+                    CMD.Parameters.AddWithValue("@AreaDescription", alert.AreaDescription);
+                    CMD.CommandText = @"INSERT INTO Alerts (Id,Date,Time,EventType,State,City,Severity,NWSHeadline,Description,DescriptionKeywords,AreaDescription) 
+                                    values (@Id,@Date,@Time,@EventType,@State,@City,@Severity,@NWSHeadline,@Description,@DescriptionKeywords,@AreaDescription)";
+                    CMD.Connection.Open();
+                    CMD.ExecuteNonQuery();
+                    CMD.Connection.Close();
+                    WasObjectAddedToDB = true;
+                }
+            }
+            else
+            {
+                WasObjectAddedToDB = false;
+            }
+            return WasObjectAddedToDB;
+        }
+        /// <summary>
+        /// Check if record already exists.
+        /// </summary>
+        /// <param name="alert"></param>
+        /// <returns>True if Record exists, false if it doesn't</returns>
+        private static bool DoesObjectAlreadyExist(Alert alert)
+        {
+            string IdOfObject = "";
             using (IDbConnection connection = new SQLiteConnection(LoadConnectionString(ConnectionString.MainDB)))
             {
+                // Build sequel query
                 SQLiteCommand CMD = new SQLiteCommand();
                 CMD.Connection = (SQLiteConnection)connection;
                 CMD.CommandType = CommandType.Text;
-                CMD.Parameters.AddWithValue("@Id", alert.Id);
-                CMD.Parameters.AddWithValue("@Date", alert.Date);
-                CMD.Parameters.AddWithValue("@Time", alert.Time);
-                CMD.Parameters.AddWithValue("@EventType", alert.EventType);
-                CMD.Parameters.AddWithValue("@State", alert.State);
-                CMD.Parameters.AddWithValue("@City", alert.City);
-                CMD.Parameters.AddWithValue("@Severity", alert.Severity);
-                CMD.Parameters.AddWithValue("@NWSHeadline", alert.NWSHeadline);
-                CMD.Parameters.AddWithValue("@Description", alert.Description);
-                CMD.Parameters.AddWithValue("@DescriptionKeywords", alert.DescriptionKeywords);
-                CMD.Parameters.AddWithValue("@AreaDescription", alert.AreaDescription);
-                CMD.CommandText = @"INSERT INTO Alerts (Id,Date,Time,EventType,State,City,Severity,NWSHeadline,Description,DescriptionKeywords,AreaDescription) 
-                                    values (@Id,@Date,@Time,@EventType,@State,@City,@Severity,@NWSHeadline,@Description,@DescriptionKeywords,@AreaDescription)";
+                CMD.CommandText = $"SELECT Id FROM Alerts WHERE Id LIKE '{alert.Id.Replace('-','_')}'";
                 CMD.Connection.Open();
-                CMD.ExecuteNonQuery();
-                CMD.Connection.Close();
+                SQLiteDataReader rdr = CMD.ExecuteReader();
 
-    }
+                // Read from DB
+                while (rdr.Read())
+                {
+                    IdOfObject = rdr.GetString(0);
+                }
+                rdr.Close();
+                CMD.Connection.Close();
+            }
+            if (IdOfObject == alert.Id)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+
         /// <summary>
         /// UPDATE an Alert object in DB.
         /// </summary>

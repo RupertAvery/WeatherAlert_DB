@@ -13,13 +13,14 @@ namespace WeatherAlert_DB
     class LogHandler
     {
         string CurrentFilePath;
-        string LogMessage;
+        public string LogMessage;
+        public int NumOfObjects;
         DateTime DateTimeNow;
         Exception LoggedException;
         
         public LogHandler(string logMessage, Exception e = null)
         {
-            LogMessage = logMessage;
+            LogMessage += logMessage;
             DateTimeNow = DateTime.Now;
             LoggedException = e;
             CurrentFilePath = Environment.CurrentDirectory + "\\Weather_DB_LOG.txt";

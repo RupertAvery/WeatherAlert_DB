@@ -126,7 +126,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="LogHandler.cs" />
-    <Compile Include="MainLogicHandler.cs" />
+    <Compile Include="ApiLoopHandler.cs" />
     <Compile Include="NWS_ApiController.cs" />
     <Compile Include="SQLite_Data_Access.cs" />
     <Page Include="AreYouSureDialog.xaml">
@@ -146,7 +146,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AreYouSureDialog.xaml.cs">
+    <Compile Include="InformUserDialog.cs">
       <DependentUpon>AreYouSureDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="DatabaseOptions.xaml.cs">

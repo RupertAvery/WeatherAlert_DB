@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
-using System.Windows;
 
 namespace WeatherAlert_DB
 {
     /// <summary>
-    /// This class handles the primary applications logic.
+    /// This class handles the GET Request Logic on a timer event.
     /// </summary>
-    class MainLogicHandler
+    static class ApiLoopHandler
     {
         // Check if app just started if so force a new Sync request
         private static async void CallApiEvent(Object source, ElapsedEventArgs e)
         {
             // Check if user is using DummyDb instead. 
             // If so prevent API Calls here.
-            if (!SQLite_Data_Access.IsUsingDummyDB)
+             if (!SQLite_Data_Access.IsUsingDummyDB)
             {
                 SyncInfoToDB();
             }
@@ -29,22 +24,30 @@ namespace WeatherAlert_DB
             }
         }
         /// <summary>
-        /// Start an auto resetting timer to request the API.
+        /// Start an auto resetting Timer to request the API. 
+        /// This is meant to continuously request the API while the app is running.
         /// </summary>
-        public static void StartApiTimer()
+        public static void StartApiTimerLoop()
         {
             // Request API every 15 minutes.
             Timer ApiTimer = new Timer(900000);
             ApiTimer.AutoReset = true;
             ApiTimer.Elapsed += new ElapsedEventHandler(CallApiEvent);
             ApiTimer.Start();
-
+        }
+        /// <summary>
+        /// A single use Timer to call to request the API.
+        /// </summary>
+        /// <param name="delayInMilliSec"></param>
+        public static void SingleApiTimer(int delayInMilliSec)
+        {
             // Request API on application start after short delay
-            Timer ApiTimerStartup = new Timer(60000);
+            Timer ApiTimerStartup = new Timer(delayInMilliSec);
             ApiTimerStartup.AutoReset = false;
             ApiTimerStartup.Elapsed += new ElapsedEventHandler(CallApiEvent);
             ApiTimerStartup.Start();
         }
+
         private static void SyncInfoToDB()
         {
             // Call log to write to later.
@@ -62,18 +65,20 @@ namespace WeatherAlert_DB
                 int LinesTriggered = 0;
 
                 // Check if a Headline was found since it may not always be sent
-                // This is used to make sure the index gets calculated correctly
+                // These are used to make sure the index gets calculated correctly
                 bool WasThereA_NwsHeadline = false;
+                bool HasIdAlreadyBeenFound = false;
 
                 // Have to check line by line incase some parameters wasn't sent
                 for (int CurrentIndex = 0; CurrentIndex < 8; ++CurrentIndex)
                 {
 
                     // Iterate through all entries and scan for certain keywords
-                    if (AlertInfoList[CurrentIndex].StartsWith("@id:"))
+                    if (AlertInfoList[CurrentIndex].StartsWith("@id:") && !HasIdAlreadyBeenFound)
                     {
                         // Grab ID
                         ValuesForObjectInstantiation[0] = Alert.ParseID(AlertInfoList[0]);
+                        HasIdAlreadyBeenFound = true;
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("areaDesc:"))

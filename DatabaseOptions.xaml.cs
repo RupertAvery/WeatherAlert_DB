@@ -50,8 +50,8 @@ namespace WeatherAlert_DB
                 }
                 catch (IOException exception)
                 {
-                    AreYouSureDialog areYouSureDialog = 
-                        new AreYouSureDialog("OPERATION DENIED. Exception logged. \n\n" +
+                    InformUserDialog areYouSureDialog = 
+                        new InformUserDialog("OPERATION DENIED. Exception logged. \n\n" +
                                               "Name cannot match or overwrite current DB.", "Ok", 
                                               "Please try a different name or destination.");
                     areYouSureDialog.Owner = this;
@@ -66,8 +66,8 @@ namespace WeatherAlert_DB
         private void EditDB_Button_Click(object sender, RoutedEventArgs e)
         {
             // Allow user to edit the DB after confirming prompt.
-            AreYouSureDialog areYouSureDialog =
-               new AreYouSureDialog("Are you sure you wish to edit the DB?", "Continue",
+            InformUserDialog areYouSureDialog =
+               new InformUserDialog("Are you sure you wish to edit the DB?", "Continue",
                                          "WARNING: Improper modifications to this database can cause " +
                                          "corrupted data or put the database in a nonrecoverable state. " +
                                          "Continue with caution.");
@@ -86,8 +86,8 @@ namespace WeatherAlert_DB
         {
             // Give the user one last chance to change their mind before they reset the DB.
             SystemSounds.Exclamation.Play();
-            AreYouSureDialog areYouSureDialog = 
-                new AreYouSureDialog("Are you sure you wish to reset the DB?", "DELETE", 
+            InformUserDialog areYouSureDialog = 
+                new InformUserDialog("Are you sure you wish to reset the DB?", "DELETE", 
                                           "WARNING: This action CLEARS ALL RECORDS in the database " +
                                           "and this cannot be undone. Are you absolutely sure?");
             areYouSureDialog.Owner = this;     
@@ -114,6 +114,9 @@ namespace WeatherAlert_DB
         private void DummyDB_Checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             SQLite_Data_Access.IsUsingDummyDB = false;
+
+            // Use a timer to request the data after a minute.
+            ApiLoopHandler.SingleApiTimer(60000);
 
             // Log info
             var Log = new LogHandler("Switched to MainDB.");

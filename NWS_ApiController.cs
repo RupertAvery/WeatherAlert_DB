@@ -30,10 +30,6 @@ namespace WeatherAlert_DB
                 var httpResponse = client.GetStreamAsync(httpRequest);
                 StreamReader rdr = new StreamReader(httpResponse.Result);
                 var content = rdr.ReadToEnd();
-
-                // Log info
-                var Log = new LogHandler("Services requested successfully.");
-                Log.WriteLogFile();
                 return content;
             }
             catch (HttpRequestException e)

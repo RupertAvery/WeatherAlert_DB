@@ -13,7 +13,7 @@ namespace WeatherAlert_DB
         {
             InitializeComponent();
             //debug
-            MainLogicHandler.StartApiTimer();
+            ApiLoopHandler.StartApiTimerLoop();
             
         }
 

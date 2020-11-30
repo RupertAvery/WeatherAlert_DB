@@ -5,7 +5,7 @@ namespace WeatherAlert_DB
     /// <summary>
     /// Interaction logic for AreYouSureDialog.xaml
     /// </summary>
-    public partial class AreYouSureDialog : Window
+    public partial class InformUserDialog : Window
     {
         /// <summary>
         /// Open a new Dialog to ask user if they want to continue.
@@ -13,7 +13,7 @@ namespace WeatherAlert_DB
         /// The string actionButtonTxt is the confirm button content text.
         /// The string WarningTxt is optional and is displayed in italics underneath prompt text.
         /// </summary>
-        public AreYouSureDialog(string informUserPrompt, string actionButtonTxt, string WarningTxt = "")
+        public InformUserDialog(string informUserPrompt, string actionButtonTxt, string WarningTxt = "")
         {
             // Set window controls to passed in parameters
             InitializeComponent();

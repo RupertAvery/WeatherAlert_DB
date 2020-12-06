@@ -29,44 +29,65 @@
     <Grid Margin="3,3,3,3">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="41*" MinHeight="300"/>
-            <RowDefinition MinHeight="100" Height="100"/>
+            <RowDefinition Height="500*"/>
         </Grid.RowDefinitions>
 
-        <TabControl Grid.Row="0"  Margin="0,0,0,5" Background="#FFD8D8D8">
+        <TabControl Grid.Row="0"  Margin="0,0,0,0" Background="#FFD8D8D8">
             <TabItem Header="Event View" Grid.Row="0" Style="{StaticResource MenuTriggerStyle}">
 
-                <DockPanel HorizontalAlignment="Left" Height="Auto">
-                    <GroupBox Header="Filter By:" Foreground="Black" BorderBrush="Gray" Margin="1" Grid.Column="0" DockPanel.Dock="Left" Height="Auto">
-                        <StackPanel Margin="1,1,1,1">
-                            <Label/>
-                            <Label Content="Event ID" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
-                            <TextBlock Background="White" Margin="5,5,5,5"/>
-                            <Label Content="Date Start" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
-                            <ComboBox Margin="5,5,5,5"/>
-                            <Label Content="Date End" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
-                            <ComboBox Margin="5,5,5,5"/>
-                            <Label Content="Event Type" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
-                            <ComboBox Margin="5,5,5,5"/>
-                            <Label Content="State" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
-                            <ComboBox Margin="5,5,5,5"/>
-                            <Label Content="Keywords" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
-                            <ListBox Margin="5,5,5,5"/>
-                        </StackPanel>
+                <DockPanel HorizontalAlignment="Left" Height="Auto" LastChildFill="True">
+                    <GroupBox Header="Filter By:" Foreground="Black" BorderBrush="Gray" Margin="1" Grid.Column="0" DockPanel.Dock="Left" Height="Auto" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False">
+                        <ScrollViewer>
+                            <StackPanel Margin="1,1,1,1">
+                                <Label/>
+                                <Label Content="Event ID" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
+                                <TextBox x:Name="EV_EventID_TextBox" Background="White" Margin="5,5,5,5" TextChanged="EV_EventID_TextBox_TextChanged"/>
+                                <Label Content="Date Start" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
+                                <DatePicker x:Name="EV_DateStart_DatePicker" Margin="5,5,5,5" CalendarClosed="EV_DateStart_DatePicker_CalendarClosed"/>
+
+
+                                <Label Content="Date End" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
+                                <DatePicker x:Name="EV_DateEnd_DatePicker" Margin="5,5,5,5" CalendarClosed="EV_DateEnd_DatePicker_CalendarClosed"/>
+                                <Label Content="Event Type" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
+                                <ComboBox x:Name="EV_EventType_ComboBox" Margin="5,5,5,5" DropDownClosed="EV_EventType_ComboBox_DropDownClosed"/>
+                                <Label Content="State" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
+                                <ComboBox x:Name="EV_State_ComboBox" Margin="5,5,5,5" DropDownClosed="EV_State_ComboBox_DropDownClosed"/>
+                                <Label Content="Keywords" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
+
+                                <ListBox x:Name="EV_Keywords_ListBox" Margin="5,5,5,5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+                            </StackPanel>
+                        </ScrollViewer>
                     </GroupBox>
 
-                    <Button Content="PLACEHOLDER" Grid.Column="1" DockPanel.Dock="Right"/>
+                    <ListView x:Name="EventView_ListView" Margin="5,5,5,5"  BorderThickness="1.2" Foreground="#FF4169D1">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Id" Width=" 130" DisplayMemberBinding="{Binding Id}"/>
+                                <GridViewColumn Header="Date" Width=" 90" DisplayMemberBinding="{Binding Date}"/>
+                                <GridViewColumn Header="Time" Width=" 110" DisplayMemberBinding="{Binding Time}"/>
+                                <GridViewColumn Header="Event Type" Width=" 180" DisplayMemberBinding="{Binding EventType}"/>
+                                <GridViewColumn Header="State" Width=" 40" DisplayMemberBinding="{Binding State}"/>
+                                <GridViewColumn Header="City" Width=" 100" DisplayMemberBinding="{Binding City}"/>
+                                <GridViewColumn Header="Severity" Width=" 75" DisplayMemberBinding="{Binding Severity}"/>
+                                <GridViewColumn Header="NWS Headline" Width=" 150" DisplayMemberBinding="{Binding NWSHeadline}"/>
+                                <GridViewColumn Header="Description" Width=" 100" DisplayMemberBinding="{Binding Description}"/>
+                                <GridViewColumn Header="Description Keywords" Width=" 150" DisplayMemberBinding="{Binding DescriptionKeywords}"/>
+                                <GridViewColumn Header="Area Description" Width=" 150" DisplayMemberBinding="{Binding AreaDescription}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </DockPanel>
-
-
 
             </TabItem>
             <TabItem Header="Graph View" Grid.Row="0" Style="{StaticResource MenuTriggerStyle}"/>
+
         </TabControl>
-        <Button x:Name="DatabaseOptions_Button" Content="Database Options" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Height="20" Width="98" Click="DatabaseOptions_Button_Click" />
+        <Button x:Name="DatabaseOptions_Button" Content="Database Options" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Height="20" Width="100" Click="DatabaseOptions_Button_Click" />
         <!--Zip Code Scanner Section-->
-        <DockPanel Grid.Row="1" Margin="0,0,0,0">
-            <GroupBox BorderThickness="1" BorderBrush="Gray" Header="Zip Code Scanner" Margin="0,-8,0,0" Background="#FFDEDEDE"/>
-        </DockPanel>
+
+
+
+
     </Grid>
 </Window>

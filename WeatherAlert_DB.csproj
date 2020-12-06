@@ -128,8 +128,9 @@
     <Compile Include="LogHandler.cs" />
     <Compile Include="ApiLoopHandler.cs" />
     <Compile Include="NWS_ApiController.cs" />
+    <Compile Include="Properties\UpdateUIElements.cs" />
     <Compile Include="SQLite_Data_Access.cs" />
-    <Page Include="AreYouSureDialog.xaml">
+    <Page Include="InformUserDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -147,7 +148,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InformUserDialog.cs">
-      <DependentUpon>AreYouSureDialog.xaml</DependentUpon>
+      <DependentUpon>InformUserDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="DatabaseOptions.xaml.cs">
       <DependentUpon>DatabaseOptions.xaml</DependentUpon>

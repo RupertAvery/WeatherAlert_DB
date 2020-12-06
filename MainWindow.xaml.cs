@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System;
-using System.Collections.Generic;
 
 namespace WeatherAlert_DB
 {
@@ -13,8 +12,7 @@ namespace WeatherAlert_DB
         {
             InitializeComponent();
             //debug
-            ApiLoopHandler.StartApiTimerLoop();
-            
+            UpdateEventViewUI();
         }
 
         private void DatabaseOptions_Button_Click(object sender, RoutedEventArgs e)
@@ -23,6 +21,14 @@ namespace WeatherAlert_DB
             DatabaseOptions databaseOptions = new DatabaseOptions();
             databaseOptions.Owner = this;
             databaseOptions.ShowDialog();
+        }
+        /// <summary>
+        /// Refresh and Display control data to the user for the entire EventViewer section.
+        /// </summary>
+        private void UpdateEventViewUI()
+        {
+            UpdateUIElements.PopulateAllEventViewControls(EventView_ListView, EV_EventID_TextBox, EV_DateStart_DatePicker,
+                EV_DateEnd_DatePicker, EV_EventType_ComboBox, EV_State_ComboBox, EV_Keywords_ListBox, SQLite_Data_Access.ConnectionString.MainDB);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -33,5 +39,31 @@ namespace WeatherAlert_DB
                 windows.Close();
             }
         }
+
+        private void EV_EventID_TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateEventViewUI();
+        }
+
+        private void EV_DateStart_DatePicker_CalendarClosed(object sender, RoutedEventArgs e)
+        {
+            UpdateEventViewUI();
+        }
+
+        private void EV_DateEnd_DatePicker_CalendarClosed(object sender, RoutedEventArgs e)
+        {
+            UpdateEventViewUI();
+        }
+
+        private void EV_EventType_ComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            UpdateEventViewUI();
+        }
+
+        private void EV_State_ComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            UpdateEventViewUI();
+        }
     }
+    
 }

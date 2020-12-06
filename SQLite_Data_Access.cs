@@ -6,7 +6,7 @@ using System.Data.SQLite;
 
 namespace WeatherAlert_DB
 {
-    class SQLite_Data_Access
+    static public class SQLite_Data_Access
     {
         // Is the user wanting to use the DummyDB
         public static bool IsUsingDummyDB = true;

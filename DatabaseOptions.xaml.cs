@@ -101,7 +101,6 @@ namespace WeatherAlert_DB
                 this.Close();
             }
         }
-
         private void DummyDB_Checkbox_Checked(object sender, RoutedEventArgs e)
         {
             SQLite_Data_Access.IsUsingDummyDB = true;
@@ -110,17 +109,17 @@ namespace WeatherAlert_DB
             var Log = new LogHandler("Switched to DummyDB.");
             Log.WriteLogFile();
         }
-
         private void DummyDB_Checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             SQLite_Data_Access.IsUsingDummyDB = false;
 
-            // Use a timer to request the data after a minute.
-            ApiLoopHandler.SingleApiTimer(60000);
-
             // Log info
             var Log = new LogHandler("Switched to MainDB.");
             Log.WriteLogFile();
+        }
+        private void SyncDB_Button_Click(object sender, RoutedEventArgs e)
+        {
+            ApiLoopHandler.SingleApiTimer(30000);
         }
     }
 }

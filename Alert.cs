@@ -6,22 +6,22 @@ namespace WeatherAlert_DB
     /// <summary>
     /// This class includes methods to convert the raw json info from the API to construct Alert Objects.
     /// </summary>
-    class Alert
+    public class Alert
     {
-        public string Id;
-        public string Date;
-        public string Time;
-        public string EventType;
-        public string State;
-        public string City;
-        public string Severity;
-        public string NWSHeadline;
-        public string Description;
-        public string DescriptionKeywords;
-        public string AreaDescription;
-        private static Dictionary<string, string> StateDictionary = new Dictionary<string,string>
-        { { "AL", "ALABAMA" }, { "AK", "ALASKA" }, { "AZ", "ARIZONA" }, { "AR", "ARKANSAS" }, 
-          { "CA", "CALIFORNIA" }, { "CO", "COLORADO" }, { "CT", "CONNECTICUT" }, { "DE", "DELAWARE" }, 
+        public string Id { get; }
+        public string Date { get; }
+        public string Time { get; }
+        public string EventType { get; }
+        public string State { get; }
+        public string City { get; }
+        public string Severity { get; }
+        public string NWSHeadline { get; }
+        public string Description { get; }
+        public string DescriptionKeywords { get; }
+        public string AreaDescription { get; }
+        public static Dictionary<string, string> StateDictionary { get; } = new Dictionary<string, string> 
+        { { "AL", "ALABAMA" }, { "AK", "ALASKA" }, { "AZ", "ARIZONA" }, { "AR", "ARKANSAS" },
+          { "CA", "CALIFORNIA" }, { "CO", "COLORADO" }, { "CT", "CONNECTICUT" }, { "DE", "DELAWARE" },
           { "FL", "FLORIDA" }, { "GA", "GEORGIA" }, { "HI", "HAWAII" }, { "ID", "IDAHO" },
           { "IL", "ILLINOIS" }, { "IN", "INDIANA" }, { "IA", "IOWA" }, { "KS", "KANSAS" },
           { "KY", "KENTUCKY" }, { "LA", "LOUISIANA" }, { "ME", "MAINE" }, { "MD", "MARYLAND" },
@@ -34,12 +34,12 @@ namespace WeatherAlert_DB
           { "VT", "VERMONT" }, { "VA", "VIRGINIA" }, { "WA", "WASHINGTON" }, { "WV", "WEST VIRGINIA" },
           { "WI", "WISCONSIN" }, { "WY", "WYOMING" }
         };
-        private static string[] DescriptorWords = 
+        public static string[] DescriptorWords { get; } =
         {     "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM",
               "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE",
               "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE",
               "SLUSH", "SLUSHY", "ADVISORY", "SLEET", "FREEZING", "CLOUDY",
-              "WATER LEVEL", "WAVE", "SHOWER", "THUNDER", "LIGHTNING"
+              "WATER LEVEL", "WAVE", "SHOWER", "THUNDER", "LIGHTNING", "THUNDERSTORM"
         };
         public Alert(string id, string date, string time, string eventType, string state, string city, string severity, string nwsHeadline, string description, string descriptionKeywords, string areaDescription)
         {

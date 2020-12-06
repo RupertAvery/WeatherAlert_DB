@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WeatherAlert_DB"
         mc:Ignorable="d"
-        Title="Database Options" Height="175" Width="282" WindowStartupLocation="CenterOwner" MinWidth="200" MinHeight="200">
+        Title="Database Options" Height="230" Width="282" WindowStartupLocation="CenterOwner" MinWidth="200" MinHeight="230">
 
     <Window.Resources>
         <Style x:Key = "ButtonStyle" TargetType = "Button">
@@ -23,16 +23,17 @@
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
             <RowDefinition Height="15"></RowDefinition>
             <RowDefinition Height="25"></RowDefinition>
         </Grid.RowDefinitions>
 
 
-
-        <Button x:Name="ImportDB_Button" Content="Import Database" Grid.Row="0" Style="{DynamicResource ButtonStyle}" Click="ImportDB_Button_Click"/>
-        <Button x:Name="ExportDB_Button" Content="Export Database" Grid.Row="1" Style="{DynamicResource ButtonStyle}" Click="ExportDB_Button_Click"/>
-        <Button x:Name="EditDB_Button" Content="EDIT Database" Grid.Row="2" Foreground="Orange" Style="{DynamicResource ButtonStyle}" Click="EditDB_Button_Click"/>
-        <Button x:Name="DeleteDB_Button" Content="DELETE Database" Grid.Row="3" Foreground="Red" Style="{DynamicResource ButtonStyle}" Click="DeleteDB_Button_Click"/>
-        <CheckBox x:Name="DummyDB_Checkbox" Content="Use dummy Database? (DEBUG)" HorizontalAlignment="Center" Margin="2,3,3,3" Grid.Row="5" Checked="DummyDB_Checkbox_Checked" Unchecked="DummyDB_Checkbox_Unchecked"/>
+        <Button x:Name="SyncDB_Button" Content="Sync Database" Grid.Row="0" Style="{DynamicResource ButtonStyle}" Click="SyncDB_Button_Click"/>
+        <Button x:Name="ImportDB_Button" Content="Import Database" Grid.Row="1" Style="{DynamicResource ButtonStyle}" Click="ImportDB_Button_Click"/>
+        <Button x:Name="ExportDB_Button" Content="Export Database" Grid.Row="2" Style="{DynamicResource ButtonStyle}" Click="ExportDB_Button_Click"/>
+        <Button x:Name="EditDB_Button" Content="EDIT Database" Grid.Row="3" Foreground="Orange" Style="{DynamicResource ButtonStyle}" Click="EditDB_Button_Click"/>
+        <Button x:Name="DeleteDB_Button" Content="DELETE Database" Grid.Row="4" Foreground="Red" Style="{DynamicResource ButtonStyle}" Click="DeleteDB_Button_Click"/>
+        <CheckBox x:Name="DummyDB_Checkbox" Content="Use dummy Database? (DEBUG)" HorizontalAlignment="Center" Margin="2,3,3,3" Grid.Row="6" Checked="DummyDB_Checkbox_Checked" Unchecked="DummyDB_Checkbox_Unchecked"/>
     </Grid>
 </Window>

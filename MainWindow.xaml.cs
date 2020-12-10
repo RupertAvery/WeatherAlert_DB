@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace WeatherAlert_DB
 {
@@ -13,6 +15,7 @@ namespace WeatherAlert_DB
             InitializeComponent();
             //debug
             UpdateEventViewUI();
+            AddEventsToKeywordCheckBoxs();
         }
 
         private void DatabaseOptions_Button_Click(object sender, RoutedEventArgs e)
@@ -27,10 +30,20 @@ namespace WeatherAlert_DB
         /// </summary>
         private void UpdateEventViewUI()
         {
-            UpdateUIElements.PopulateAllEventViewControls(EventView_ListView, EV_EventID_TextBox, EV_DateStart_DatePicker,
-                EV_DateEnd_DatePicker, EV_EventType_ComboBox, EV_State_ComboBox, EV_Keywords_ListBox, SQLite_Data_Access.ConnectionString.MainDB);
+            UpdateUIElements.PopulateAllEventViewControls(
+                EventView_ListView, EV_EventID_TextBox, EV_DateStart_DatePicker,
+                EV_DateEnd_DatePicker, EV_EventType_ComboBox, EV_State_ComboBox, 
+                EV_Keywords_ListBox, SQLite_Data_Access.ConnectionString.MainDB, Bottom_StatusBar);
         }
-
+        public void AddEventsToKeywordCheckBoxs()
+        {
+            // Ensure the Checkbox's generated can also update the ListView
+            foreach (CheckBox checkbox in EV_Keywords_ListBox.Items)
+            {
+                checkbox.Checked += KeyWordCheckBox_Changed;
+                checkbox.Unchecked += KeyWordCheckBox_Changed;
+            }
+        }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // If user attempts to close this MainWindow then close all other currently open windows and exit application.
@@ -38,9 +51,14 @@ namespace WeatherAlert_DB
             {
                 windows.Close();
             }
+            // Lastly save any settings from the user before closing
+            Properties.Settings.Default.Save();
         }
-
-        private void EV_EventID_TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void KeyWordCheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            UpdateEventViewUI();
+        }
+        private void EV_EventID_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateEventViewUI();
         }

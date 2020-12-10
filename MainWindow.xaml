@@ -30,6 +30,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="500*"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
 
         <TabControl Grid.Row="0"  Margin="0,0,0,0" Background="#FFD8D8D8">
@@ -44,8 +45,6 @@
                                 <TextBox x:Name="EV_EventID_TextBox" Background="White" Margin="5,5,5,5" TextChanged="EV_EventID_TextBox_TextChanged"/>
                                 <Label Content="Date Start" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
                                 <DatePicker x:Name="EV_DateStart_DatePicker" Margin="5,5,5,5" CalendarClosed="EV_DateStart_DatePicker_CalendarClosed"/>
-
-
                                 <Label Content="Date End" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
                                 <DatePicker x:Name="EV_DateEnd_DatePicker" Margin="5,5,5,5" CalendarClosed="EV_DateEnd_DatePicker_CalendarClosed"/>
                                 <Label Content="Event Type" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
@@ -53,9 +52,7 @@
                                 <Label Content="State" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
                                 <ComboBox x:Name="EV_State_ComboBox" Margin="5,5,5,5" DropDownClosed="EV_State_ComboBox_DropDownClosed"/>
                                 <Label Content="Keywords" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
-
                                 <ListBox x:Name="EV_Keywords_ListBox" Margin="5,5,5,5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-
                             </StackPanel>
                         </ScrollViewer>
                     </GroupBox>
@@ -76,18 +73,24 @@
                                 <GridViewColumn Header="Area Description" Width=" 150" DisplayMemberBinding="{Binding AreaDescription}"/>
                             </GridView>
                         </ListView.View>
+                        <CheckBox Content="CheckBox" Height="100" Width="100" Checked="KeyWordCheckBox_Changed"/>
                     </ListView>
                 </DockPanel>
-
             </TabItem>
-            <TabItem Header="Graph View" Grid.Row="0" Style="{StaticResource MenuTriggerStyle}"/>
-
+            <TabItem Header="Graph View" Grid.Row="1" Style="{StaticResource MenuTriggerStyle}"/>
         </TabControl>
+        
         <Button x:Name="DatabaseOptions_Button" Content="Database Options" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" Height="20" Width="100" Click="DatabaseOptions_Button_Click" />
-        <!--Zip Code Scanner Section-->
-
-
-
-
+        <StatusBar x:Name="Bottom_StatusBar" Grid.Row="1" Background="#FFD8D8D8" BorderThickness="1" BorderBrush="#FF767676">
+            <StatusBarItem HorizontalAlignment="Left">
+                <TextBlock Text="Records Shown: " FontSize="14"/>
+            </StatusBarItem>
+            
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="Sync Status: " FontSize="14"/>
+            </StatusBarItem>
+           
+        </StatusBar>
     </Grid>
+    
 </Window>

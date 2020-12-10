@@ -14,6 +14,7 @@ namespace WeatherAlert_DB
         public DatabaseOptions()
         {
             InitializeComponent();
+
             // If user is wanting to use the DummyDB Force check this box.
             if (SQLite_Data_Access.IsUsingDummyDB) { DummyDB_Checkbox.IsChecked = true; }
         }
@@ -104,6 +105,7 @@ namespace WeatherAlert_DB
         private void DummyDB_Checkbox_Checked(object sender, RoutedEventArgs e)
         {
             SQLite_Data_Access.IsUsingDummyDB = true;
+            Properties.Settings.Default.UserUsingDummyDB = true;
 
             // Log info
             var Log = new LogHandler("Switched to DummyDB.");
@@ -112,6 +114,7 @@ namespace WeatherAlert_DB
         private void DummyDB_Checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             SQLite_Data_Access.IsUsingDummyDB = false;
+            Properties.Settings.Default.UserUsingDummyDB = false;
 
             // Log info
             var Log = new LogHandler("Switched to MainDB.");

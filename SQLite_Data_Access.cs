@@ -9,7 +9,7 @@ namespace WeatherAlert_DB
     static public class SQLite_Data_Access
     {
         // Is the user wanting to use the DummyDB
-        public static bool IsUsingDummyDB = true;
+        public static bool IsUsingDummyDB = Properties.Settings.Default.UserUsingDummyDB; 
         // DB ConnectionStrings currently available to the application.
         public enum ConnectionString
         {

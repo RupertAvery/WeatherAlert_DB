@@ -22,5 +22,17 @@ namespace WeatherAlert_DB.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UserUsingDummyDB {
+            get {
+                return ((bool)(this["UserUsingDummyDB"]));
+            }
+            set {
+                this["UserUsingDummyDB"] = value;
+            }
+        }
     }
 }

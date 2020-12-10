@@ -38,8 +38,9 @@ namespace WeatherAlert_DB
         {     "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM",
               "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE",
               "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE",
-              "SLUSH", "SLUSHY", "ADVISORY", "SLEET", "FREEZING", "CLOUDY",
-              "WATER LEVEL", "WAVE", "SHOWER", "THUNDER", "LIGHTNING", "THUNDERSTORM"
+              "SLUSH", "ADVISORY", "SLEET", "FREEZING", "CLOUDY", 
+              "WATER LEVEL", "WAVE", "SHOWER", "THUNDER", "LIGHTNING",
+              "SURF", "THUNDERSTORM"
         };
         public Alert(string id, string date, string time, string eventType, string state, string city, string severity, string nwsHeadline, string description, string descriptionKeywords, string areaDescription)
         {
@@ -151,7 +152,7 @@ namespace WeatherAlert_DB
             {
                 foreach (var descriptorWord in DescriptorWords)
                 {
-                    if (descriptorWord == word && !CombinedDescriptorWords.Contains(descriptorWord))
+                    if (word.Contains(descriptorWord) && !CombinedDescriptorWords.Contains(descriptorWord))
                     {
                         CombinedDescriptorWords += descriptorWord + " ";
                     }

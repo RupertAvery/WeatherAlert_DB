@@ -3,23 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 
 namespace WeatherAlert_DB
 {
-    
+
     /// <summary>
     /// This class updates the MainWindow with information from the DB.
     /// </summary>
     public class UpdateUIElements
     {
-        // EVENT VIEWER SECTION
+        private static bool IsDispatcherTimerActive = false;
+
+        // -------------------------------------------
+        // - EVENT VIEWER SECTION                    -
+        // -------------------------------------------
+
         /// <summary>
         /// This updates all the controls in the MainWindow for the EventViewer section.
         /// </summary>
         public static void PopulateAllEventViewControls(
             ListView listView, TextBox eventIDTextBox, DatePicker datePickerStart,
             DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox,
-            ListBox keywordsListBox, SQLite_Data_Access.ConnectionString connectionString)
+            ListBox keywordsListBox, SQLite_Data_Access.ConnectionString connectionString,
+            StatusBar statusBar)
         {
             // Make sure valid chars are entered in the EventID TextBox.
             // If they are valid, then update and display the controls
@@ -27,16 +35,23 @@ namespace WeatherAlert_DB
             if (EnsureValidCharsInEventIDTextBox(eventIDTextBox))
             {
                 RefreshAndFilterEventList(listView, eventIDTextBox, datePickerStart,
-                                      datePickerEnd, eventTypeComboBox, stateComboBox,
-                                      keywordsListBox, connectionString);
+                                          datePickerEnd, eventTypeComboBox, stateComboBox,
+                                          keywordsListBox, connectionString);
                 UpdateUIEventType(listView, eventTypeComboBox);
                 UpdateUIStates(stateComboBox);
                 UpdateUIKeywords(keywordsListBox);
+                UpdateUIStatusBar(statusBar, listView, connectionString);
+                ApiLoopHandler.StartApiTimerLoop();
             }
         }
-        // FILTER BY SECTION
+
+        // -------------------------------------------
+        // - FILTER BY SECTION                       -
+        // -------------------------------------------
+
         private static void UpdateUIKeywords(ListBox listBox)
         {
+            // This section adds checkboxes to the empty listbox in the FilterBy Keywords section
             if (listBox.Items.Count == 0)
             {
                 foreach (var keyword in Alert.DescriptorWords)
@@ -45,19 +60,24 @@ namespace WeatherAlert_DB
                     checkBox.Content = keyword;
                     listBox.Items.Add(checkBox);
                 }
-            }    
+            }
         }
         private static void UpdateUIStates(ComboBox statesComboBox)
         {
+            // Populate the combobox with all the states names
             foreach (var State in Alert.StateDictionary.Values)
             {
                 statesComboBox.Items.Add(State);
             }
-            // Add a blank entry for user to deselect the filter
-            if (statesComboBox.Items[0].ToString() != "")
+            AddBlankItemToComboBox(statesComboBox);
+        }
+        private static void AddBlankItemToComboBox(ComboBox comboBox)
+        {
+            // Adds a blank entry for user to deselect the filter at the top of the combobox
+            if (comboBox.Items[0].ToString() != "")
             {
-                statesComboBox.Items.Insert(0, "");
-            }    
+                comboBox.Items.Insert(0, "");
+            }
         }
         private static void UpdateUIEventType(ListView listView, ComboBox eventTypeComboBox)
         {
@@ -70,26 +90,22 @@ namespace WeatherAlert_DB
                     eventTypeComboBox.Items.Add(alert.EventType);
                 }
             }
-            // Add a blank entry for user to deselect the filter
-            if (eventTypeComboBox.Items[0].ToString() != "")
-            {
-                eventTypeComboBox.Items.Insert(0, "");
-            }
+            AddBlankItemToComboBox(eventTypeComboBox);
         }
         private static bool EnsureValidCharsInEventIDTextBox(TextBox eventIDTextBox)
         {
             // Ensure that only valid chars are entered. 
             // If they are not display dialog to user.
             bool ContainsValidChars = true;
-            char[] ValidChars = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-' };
+            char[] ValidChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-' };
             foreach (char c in eventIDTextBox.Text)
             {
                 if (!ValidChars.Contains(c))
                 {
                     eventIDTextBox.Text = eventIDTextBox.Text.Remove(eventIDTextBox.Text.Length - 1);
 
-                    InformUserDialog informUserDialog = 
-                        new InformUserDialog("Please enter the correct characters.", 
+                    InformUserDialog informUserDialog =
+                        new InformUserDialog("Please enter the correct characters.",
                                              "OK", "Valid characters: (0,1,2,3,4,5,6,7,8,9,-)");
                     informUserDialog.Owner = Window.GetWindow(eventIDTextBox);
                     informUserDialog.ShowDialog();
@@ -115,7 +131,7 @@ namespace WeatherAlert_DB
         }
         private static void RefreshAndFilterEventList(
             ListView listView, TextBox eventIDTextBox, DatePicker datePickerStart,
-            DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox, 
+            DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox,
             ListBox keywordsListBox, SQLite_Data_Access.ConnectionString connectionString)
         {
             // Make a new list with all the current objects in the DB to reference.
@@ -125,9 +141,9 @@ namespace WeatherAlert_DB
             Dictionary<String, String> ReversedStateDictionary = new Dictionary<string, string>();
             foreach (var state in Alert.StateDictionary)
             {
-                ReversedStateDictionary.Add(state.Value,state.Key);
+                ReversedStateDictionary.Add(state.Value, state.Key);
             }
-            
+
             // Build LINQ query based on current values
             if (!string.IsNullOrEmpty(eventIDTextBox.Text))
             {
@@ -158,6 +174,79 @@ namespace WeatherAlert_DB
                 listView.Items.Add(Alert);
             }
         }
-        // GRAPH VIEW SECTION
+        private static void UpdateUIStatusBar(StatusBar statusBar, ListView listView, SQLite_Data_Access.ConnectionString connectionString)
+        {
+            // Update all the items in the Status Bar
+
+            // Grab all items in the statusbar
+            List<StatusBarItem> ControlsInStatusBar = new List<StatusBarItem>();
+            foreach (var item in statusBar.Items)
+            {
+                ControlsInStatusBar.Add((StatusBarItem)item);
+            }
+
+            // Handle the first StatusBar Item
+            int NumberOfAllRecords = SQLite_Data_Access.SelectAll_DB(connectionString).Count;
+            int NumberOfShownRecords = listView.Items.Count;
+            ControlsInStatusBar[0].Content = $"Records Shown: {NumberOfShownRecords}/{NumberOfAllRecords}";
+
+            // Handle the second StatusBar Item
+            StartDispatcherTimer(ControlsInStatusBar[1]);
+        }
+        private static void StartDispatcherTimer(StatusBarItem statusBarItem)
+        {
+            // Starts a timer to update the Sync Timer in the StatusBar
+            if (!IsDispatcherTimerActive)
+            {
+                IsDispatcherTimerActive = true;
+                DispatcherTimer dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(delegate (object sender, EventArgs e) { DispatcherTimer_Tick(sender, e, statusBarItem); });
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+                dispatcherTimer.Start();
+            }
+        }
+        private static void DispatcherTimer_Tick(object sender, EventArgs e, StatusBarItem statusBarItem)
+        {
+            UpdateStatusBarSyncTimer(statusBarItem);
+            ApiLoopHandler.ApiTimeSpan = ApiLoopHandler.ApiTimeSpan.Subtract(new TimeSpan(0, 0, 1));
+            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+        }
+        private static void UpdateStatusBarSyncTimer(StatusBarItem statusBarItem)
+        {
+            // Check if the user is using the DummyDB before displaying StatusBar Sync info to user
+            if (!SQLite_Data_Access.IsUsingDummyDB)
+            {
+                // Checks the ApiTimeSpan status and updates the Statusbar item with info on the Sync Status
+                // The timespan gets set to -1 if the DB is syncing
+                if (ApiLoopHandler.ApiTimeSpan.TotalMilliseconds < 0)
+                {
+                    statusBarItem.Content = "Sync Status: Syncing";
+                }
+                else
+                {
+                    statusBarItem.Content = FormatSyncStatus();
+                }
+            }
+            else
+            {
+                statusBarItem.Content = "Sync Status: Disabled";
+            }
+        }
+        private static string FormatSyncStatus()
+        {
+            // Returns the minutes left unless the minutes are under 1. Then it returns seconds instead.
+            if (ApiLoopHandler.ApiTimeSpan.TotalMinutes < 1)
+            {
+                return $"Sync Status: {ApiLoopHandler.ApiTimeSpan.Seconds}s";
+            }
+            else
+            {
+                return $"Sync Status: {ApiLoopHandler.ApiTimeSpan.Minutes}m";
+            }
+        }
+
+        // -------------------------------------------
+        // - GRAPH VIEW SECTION                      -
+        // -------------------------------------------
     }
 }

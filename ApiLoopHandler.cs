@@ -7,15 +7,23 @@ namespace WeatherAlert_DB
     /// This class handles the GET Request Logic on a timer event.
     /// </summary>
     static class ApiLoopHandler
-    {
-        // Check if app just started if so force a new Sync request
-        private static async void CallApiEvent(Object source, ElapsedEventArgs e)
+    { 
+        // Declare a single repeating timer to request the NWS Api after the elapsed time
+        private static Timer ApiTimer = new Timer(900000);
+        public static TimeSpan ApiTimeSpan = new TimeSpan(0, 0, 0, 0, (int)ApiTimer.Interval);
+
+        private static async void CallApiEvent(object source, ElapsedEventArgs e)
         {
             // Check if user is using DummyDb instead. 
             // If so prevent API Calls here.
-             if (!SQLite_Data_Access.IsUsingDummyDB)
+            if (!SQLite_Data_Access.IsUsingDummyDB)
             {
-                SyncInfoToDB();
+                while (SyncInfoToDB())
+                {
+                    ApiTimeSpan = new TimeSpan(0,0,0,0,-1);
+                }
+                // Reset API Timer
+                ApiTimeSpan = new TimeSpan(0, 0, 0, 0, (int)ApiTimer.Interval);
             }
             else
             {
@@ -29,14 +37,16 @@ namespace WeatherAlert_DB
         /// </summary>
         public static void StartApiTimerLoop()
         {
-            // Request API every 15 minutes.
-            Timer ApiTimer = new Timer(900000);
-            ApiTimer.AutoReset = true;
-            ApiTimer.Elapsed += new ElapsedEventHandler(CallApiEvent);
-            ApiTimer.Start();
+            if (!ApiTimer.Enabled)
+            {
+                // Request API every 15 minutes.
+                ApiTimer.AutoReset = true;
+                ApiTimer.Elapsed += new ElapsedEventHandler(CallApiEvent);
+                ApiTimer.Start();
+            }
         }
         /// <summary>
-        /// A single use Timer to call to request the API.
+        /// A single use Timer to call a request to the API.
         /// </summary>
         /// <param name="delayInMilliSec"></param>
         public static void SingleApiTimer(int delayInMilliSec)
@@ -47,9 +57,11 @@ namespace WeatherAlert_DB
             ApiTimerStartup.Elapsed += new ElapsedEventHandler(CallApiEvent);
             ApiTimerStartup.Start();
         }
-
-        private static void SyncInfoToDB()
+        private static bool SyncInfoToDB()
         {
+            // Declare bool to check if the data is still being entered or it is done
+            bool IsSyncing = true;
+
             // Call log to write to later.
             LogHandler AlertLog = new LogHandler("Succesfully synced records.\nDuplicates skipped:");
             
@@ -131,9 +143,6 @@ namespace WeatherAlert_DB
 
                 if (WasThereA_NwsHeadline && LinesTriggered == 8)
                 {
-                    // Reset bool
-                    WasThereA_NwsHeadline = false;
-
                     // Create a new Alert Object and store it in the DB. Insert all the info from the temp array into the object. 
                     Alert alert = new Alert(ValuesForObjectInstantiation[0], ValuesForObjectInstantiation[1],
                         ValuesForObjectInstantiation[2], ValuesForObjectInstantiation[3], ValuesForObjectInstantiation[4],
@@ -150,10 +159,11 @@ namespace WeatherAlert_DB
                     //Remove and reset all elements that were used in the AlertInfoList for the creation of this object
                     AlertInfoList.RemoveRange(0, LinesTriggered);
                 }
+
                 // Check for certain properties that may not have been sent
                 else if (WasThereA_NwsHeadline == false && LinesTriggered == 7)
                 {
-                    // Prevent NULL DB entry and specifically set the entries to null
+                    // Prevent NULL DB entry and specifically set the entries to 
                     if (ValuesForObjectInstantiation[7] == null)
                     {
                         ValuesForObjectInstantiation[7] = "NOT SPECIFIED";
@@ -180,6 +190,10 @@ namespace WeatherAlert_DB
             // Output AlertLog
             AlertLog.LogMessage += "\nTotal Skipped Alerts: " + AlertLog.NumOfObjects;
             AlertLog.WriteLogFile();
+
+            // return the bool value
+            IsSyncing = false;
+            return IsSyncing;
         }
     }
 }

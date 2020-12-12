@@ -1,0 +1,79 @@
+﻿<Window x:Class="WeatherAlert_DB.ExpandedAlertViewer_Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WeatherAlert_DB"
+        mc:Ignorable="d"
+        Title="Expanded Alert Viewer" Height="600" Width="800" BorderThickness="0,1,0,0" BorderBrush="Black" MinWidth="500" MinHeight="500">
+    
+    <Window.Resources>
+        <Style x:Key="LabelColorGrey" TargetType="Label">
+            <Setter Property="Background" Value="#FFD3D3D3"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="BorderBrush" Value="LightSlateGray"/>
+        </Style>
+        <Style x:Key="TextBlockColorGrey" TargetType="TextBlock">
+            <Setter Property="Background" Value="#FFD3D3D3"/>
+        </Style>
+        <Style x:Key="LabelColorOffWhite" TargetType="Label">
+            <Setter Property="Background" Value="#FFE2E2E2"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="BorderBrush" Value="LightSlateGray"/>
+        </Style>
+        <Style x:Key="TextBlockColorOffWhite" TargetType="TextBlock">
+            <Setter Property="Background" Value="#FFE2E2E2" />
+        </Style>
+        <Style x:Key="TextBoxColorGrey" TargetType="TextBox">
+            <Setter Property="Background" Value="#FFD3D3D3"/>
+        </Style>
+        <Style x:Key="TextBoxColorOffWhite" TargetType="TextBox">
+            <Setter Property="Background" Value="#FFE2E2E2"/>
+        </Style>
+
+    </Window.Resources>
+    
+        <Grid Name="ExpandedViewer_Grid" Loaded="ExpandedViewer_Grid_Loaded">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="330*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="150*"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Id:" Grid.Row ="0" Style="{StaticResource LabelColorGrey}"/>
+        <Label Content="Date:" Grid.Row ="1" Style="{StaticResource LabelColorOffWhite}"/>
+        <Label Content="Time:" Grid.Row ="2" Style="{StaticResource LabelColorGrey}"/>
+        <Label Content="Event Type:" Grid.Row ="3" Style="{StaticResource LabelColorOffWhite}"/>
+        <Label Content="State:" Grid.Row ="4" Style="{StaticResource LabelColorGrey}"/>
+        <Label Content="City:" Grid.Row ="5" Style="{StaticResource LabelColorOffWhite}"/>
+        <Label Content="Severity:" Grid.Row ="6" Style="{StaticResource LabelColorGrey}"/>
+        <Label Content="Description Keywords:" Grid.Row ="7" Style="{StaticResource LabelColorOffWhite}"/>
+        <Label Content="Area Description:" Grid.Row ="8" Style="{StaticResource LabelColorGrey}"/>
+        <Label Content="NWS Headline:" Grid.Row ="9" Style="{StaticResource LabelColorOffWhite}"/>
+        <Label Content="Description:" Grid.Row ="10" Style="{StaticResource LabelColorGrey}"/>
+
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Id, StringFormat=' {0}'}" Style="{StaticResource TextBlockColorGrey}"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Date, StringFormat=' {0}'}" Style="{StaticResource TextBlockColorOffWhite}"/>
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Time, StringFormat=' {0}'}" Style="{StaticResource TextBlockColorGrey}"/>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding EventType, StringFormat=' {0}'}" Style="{StaticResource TextBlockColorOffWhite}"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding State, StringFormat=' {0}'}" Style="{StaticResource TextBlockColorGrey}"/>
+        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding City, StringFormat=' {0}'}" Style="{StaticResource TextBlockColorOffWhite}"/>
+        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Severity, StringFormat=' {0}'}" Style="{StaticResource TextBlockColorGrey}"/>
+        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding DescriptionKeywords, StringFormat=' {0}'}" TextWrapping="Wrap" Style="{StaticResource TextBlockColorOffWhite}"/>
+        <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding AreaDescription, Mode=OneWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Style="{StaticResource TextBoxColorGrey}" SelectionOpacity="0.2" IsUndoEnabled="False" FontSize="14" TextOptions.TextFormattingMode="Display"/>
+        <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding NWSHeadline, Mode=OneWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Style="{StaticResource TextBoxColorOffWhite}" SelectionOpacity="0.2" IsUndoEnabled="False" FontSize="14" TextOptions.TextFormattingMode="Display"/>
+        <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Description, Mode=OneWay}" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Style="{StaticResource TextBoxColorGrey}" SelectionOpacity="0.2" IsUndoEnabled="False" FontSize="14" TextOptions.TextFormattingMode="Display"/>
+    </Grid>
+</Window>

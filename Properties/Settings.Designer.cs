@@ -25,13 +25,25 @@ namespace WeatherAlert_DB.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UserUsingDummyDB {
             get {
                 return ((bool)(this["UserUsingDummyDB"]));
             }
             set {
                 this["UserUsingDummyDB"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UserRanAppBefore {
+            get {
+                return ((bool)(this["UserRanAppBefore"]));
+            }
+            set {
+                this["UserRanAppBefore"] = value;
             }
         }
     }

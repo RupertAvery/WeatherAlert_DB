@@ -5,19 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WeatherAlert_DB"
         mc:Ignorable="d"
-        Title="Weather Alert DB Viewer" Height="535" Width="722" MinHeight="500" MinWidth="400" Closing="Window_Closing">
+        Title="Weather Alert DB Viewer" Height="535" Width="722" MinHeight="500" MinWidth="400" Closing="Window_Closing" Loaded="Window_Loaded">
     <Window.Resources>
-        <ControlTemplate x:Key="TabItemTemplate" TargetType="TabItem">
-            <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </ControlTemplate>
-
         <Style x:Key = "MenuTriggerStyle" TargetType = "TabItem">
             <Setter Property ="Background"  Value = "#FFDEDEDE"/>
             <Style.Triggers>
                 <Trigger Property = "IsSelected" Value ="True">
                     <Setter Property = "FontSize" Value = "14"/>
-
                 </Trigger>
+
                 <Trigger Property="IsSelected" Value="False">
                     <Setter Property="Background" Value="LightGray"/>
                     <Setter Property="Foreground" Value="#FF7A7A7A"/>
@@ -35,7 +31,6 @@
 
         <TabControl Grid.Row="0"  Margin="0,0,0,0" Background="#FFD8D8D8">
             <TabItem Header="Event View" Grid.Row="0" Style="{StaticResource MenuTriggerStyle}">
-
                 <DockPanel HorizontalAlignment="Left" Height="Auto" LastChildFill="True">
                     <GroupBox Header="Filter By:" Foreground="Black" BorderBrush="Gray" Margin="1" Grid.Column="0" DockPanel.Dock="Left" Height="Auto" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False">
                         <ScrollViewer>
@@ -57,7 +52,7 @@
                         </ScrollViewer>
                     </GroupBox>
 
-                    <ListView x:Name="EventView_ListView" Margin="5,5,5,5"  BorderThickness="1.2" Foreground="#FF4169D1">
+                    <ListView x:Name="EventView_ListView" Margin="5,5,5,5"  BorderThickness="1.2" Foreground="#FF4169D1" MouseDoubleClick="EventView_ListView_MouseDoubleClick">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Id" Width=" 130" DisplayMemberBinding="{Binding Id}"/>
@@ -85,11 +80,10 @@
             <StatusBarItem HorizontalAlignment="Left">
                 <TextBlock Text="Records Shown: " FontSize="14"/>
             </StatusBarItem>
-            
+
             <StatusBarItem HorizontalAlignment="Right">
                 <TextBlock Text="Sync Status: " FontSize="14"/>
             </StatusBarItem>
-           
         </StatusBar>
     </Grid>
     

@@ -10,15 +10,17 @@ namespace WeatherAlert_DB
     {
         // Is the user wanting to use the DummyDB
         public static bool IsUsingDummyDB = Properties.Settings.Default.UserUsingDummyDB; 
+
         // DB ConnectionStrings currently available to the application.
         public enum ConnectionString
         {
             MainDB,
             DummyDB,
         }
-        // Retrieve the connection string from config for DB.
+
         private static string LoadConnectionString(ConnectionString connectionStringDB)
         {
+            // Retrieve the connection string from config for DB.
             return ConfigurationManager.ConnectionStrings[connectionStringDB.ToString()].ConnectionString;
         }
 
@@ -26,9 +28,9 @@ namespace WeatherAlert_DB
         /// Queries ALL Alerts from a DB.
         /// </summary>
         /// <returns>List of Alerts</returns>
-        public static List<Alert> SelectAll_DB(ConnectionString connectionStringDB)
+        public static List<Alert> SelectAll_DB()
         {
-            using (IDbConnection connection = new  SQLiteConnection(LoadConnectionString(connectionStringDB)))
+            using (IDbConnection connection = new  SQLiteConnection(CheckWhichDBIsUsed()))
             {
                 List<Alert> alerts = new List<Alert>();
 
@@ -45,7 +47,8 @@ namespace WeatherAlert_DB
                 {
                     var Alert = new Alert(rdr.GetString(0), rdr.GetString(1), rdr.GetString(2),
                                            rdr.GetString(3), rdr.GetString(4), rdr.GetString(5),
-                                           rdr.GetString(6), rdr.GetString(7), rdr.GetString(8), rdr.GetString(9), rdr.GetString(10));
+                                           rdr.GetString(6), rdr.GetString(7), rdr.GetString(8),
+                                           rdr.GetString(9), rdr.GetString(10));
                     alerts.Add(Alert);
                 }
                 rdr.Close();
@@ -177,6 +180,19 @@ namespace WeatherAlert_DB
                 CMD.Connection.Open();
                 CMD.ExecuteNonQuery();
                 CMD.Connection.Close();
+            }
+        }
+        private static string CheckWhichDBIsUsed()
+        {
+            // Checks if the user wants to use the DummyDB or not
+            // This is ONLY used on the Select All query to prevent invalid edits to the DummyDB
+            if (IsUsingDummyDB)
+            {
+                return LoadConnectionString(ConnectionString.DummyDB);
+            }
+            else
+            {
+                return LoadConnectionString(ConnectionString.MainDB);
             }
         }
     }

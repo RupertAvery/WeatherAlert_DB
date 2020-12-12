@@ -102,6 +102,7 @@
     </Reference>
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -125,11 +126,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ExpandedAlertViewer_Window.xaml.cs">
+      <DependentUpon>ExpandedAlertViewer_Window.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InitialHelp_Window.xaml.cs">
+      <DependentUpon>InitialHelp_Window.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LogHandler.cs" />
     <Compile Include="ApiLoopHandler.cs" />
     <Compile Include="NWS_ApiController.cs" />
-    <Compile Include="Properties\UpdateUIElements.cs" />
+    <Compile Include="UpdateUIElements.cs" />
     <Compile Include="SQLite_Data_Access.cs" />
+    <Page Include="ExpandedAlertViewer_Window.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InitialHelp_Window.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="InformUserDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

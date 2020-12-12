@@ -115,6 +115,7 @@ namespace WeatherAlert_DB
         {
             SQLite_Data_Access.IsUsingDummyDB = false;
             Properties.Settings.Default.UserUsingDummyDB = false;
+            ApiLoopHandler.TriggerTimerIn30sec();
 
             // Log info
             var Log = new LogHandler("Switched to MainDB.");
@@ -122,7 +123,7 @@ namespace WeatherAlert_DB
         }
         private void SyncDB_Button_Click(object sender, RoutedEventArgs e)
         {
-            ApiLoopHandler.SingleApiTimer(30000);
+            ApiLoopHandler.TriggerTimerIn30sec();
         }
     }
 }

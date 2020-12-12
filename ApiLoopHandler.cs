@@ -23,6 +23,7 @@ namespace WeatherAlert_DB
                     ApiTimeSpan = new TimeSpan(0,0,0,0,-1);
                 }
                 // Reset API Timer
+                ApiTimer.Interval = 900000;
                 ApiTimeSpan = new TimeSpan(0, 0, 0, 0, (int)ApiTimer.Interval);
             }
             else
@@ -46,16 +47,12 @@ namespace WeatherAlert_DB
             }
         }
         /// <summary>
-        /// A single use Timer to call a request to the API.
+        /// Sets the ApiTimer to request the API in 30 seconds.
         /// </summary>
-        /// <param name="delayInMilliSec"></param>
-        public static void SingleApiTimer(int delayInMilliSec)
+        public static void TriggerTimerIn30sec()
         {
-            // Request API on application start after short delay
-            Timer ApiTimerStartup = new Timer(delayInMilliSec);
-            ApiTimerStartup.AutoReset = false;
-            ApiTimerStartup.Elapsed += new ElapsedEventHandler(CallApiEvent);
-            ApiTimerStartup.Start();
+            ApiTimer.Interval = 30000;
+            ApiTimeSpan = new TimeSpan(0, 0, 0, 0, (int)ApiTimer.Interval);
         }
         private static bool SyncInfoToDB()
         {
@@ -167,7 +164,6 @@ namespace WeatherAlert_DB
                     if (ValuesForObjectInstantiation[7] == null)
                     {
                         ValuesForObjectInstantiation[7] = "NOT SPECIFIED";
-                        ValuesForObjectInstantiation[9] = "UNKNOWN";
                     }
 
                     // Create a new Alert Object and store it in the DB. Insert all the info from the temp array into the object. 

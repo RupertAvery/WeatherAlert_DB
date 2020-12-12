@@ -15,6 +15,7 @@ namespace WeatherAlert_DB
     public class UpdateUIElements
     {
         private static bool IsDispatcherTimerActive = false;
+        public static bool HasUserRanApplicationBefore = Properties.Settings.Default.UserRanAppBefore;
 
         // -------------------------------------------
         // - EVENT VIEWER SECTION                    -
@@ -26,8 +27,7 @@ namespace WeatherAlert_DB
         public static void PopulateAllEventViewControls(
             ListView listView, TextBox eventIDTextBox, DatePicker datePickerStart,
             DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox,
-            ListBox keywordsListBox, SQLite_Data_Access.ConnectionString connectionString,
-            StatusBar statusBar)
+            ListBox keywordsListBox, StatusBar statusBar)
         {
             // Make sure valid chars are entered in the EventID TextBox.
             // If they are valid, then update and display the controls
@@ -36,11 +36,11 @@ namespace WeatherAlert_DB
             {
                 RefreshAndFilterEventList(listView, eventIDTextBox, datePickerStart,
                                           datePickerEnd, eventTypeComboBox, stateComboBox,
-                                          keywordsListBox, connectionString);
+                                          keywordsListBox);
                 UpdateUIEventType(listView, eventTypeComboBox);
                 UpdateUIStates(stateComboBox);
                 UpdateUIKeywords(keywordsListBox);
-                UpdateUIStatusBar(statusBar, listView, connectionString);
+                UpdateUIStatusBar(statusBar, listView);
                 ApiLoopHandler.StartApiTimerLoop();
             }
         }
@@ -74,9 +74,12 @@ namespace WeatherAlert_DB
         private static void AddBlankItemToComboBox(ComboBox comboBox)
         {
             // Adds a blank entry for user to deselect the filter at the top of the combobox
-            if (comboBox.Items[0].ToString() != "")
+            if (comboBox.Items.Count > 0)
             {
-                comboBox.Items.Insert(0, "");
+                if (comboBox.Items[0].ToString() != "")
+                {
+                    comboBox.Items.Insert(0, "");
+                }
             }
         }
         private static void UpdateUIEventType(ListView listView, ComboBox eventTypeComboBox)
@@ -132,10 +135,10 @@ namespace WeatherAlert_DB
         private static void RefreshAndFilterEventList(
             ListView listView, TextBox eventIDTextBox, DatePicker datePickerStart,
             DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox,
-            ListBox keywordsListBox, SQLite_Data_Access.ConnectionString connectionString)
+            ListBox keywordsListBox)
         {
             // Make a new list with all the current objects in the DB to reference.
-            List<Alert> AlertList = SQLite_Data_Access.SelectAll_DB(connectionString);
+            List<Alert> AlertList = SQLite_Data_Access.SelectAll_DB();
 
             // Make a reversed StateDictionary to compare the values to the keys
             Dictionary<String, String> ReversedStateDictionary = new Dictionary<string, string>();
@@ -174,7 +177,7 @@ namespace WeatherAlert_DB
                 listView.Items.Add(Alert);
             }
         }
-        private static void UpdateUIStatusBar(StatusBar statusBar, ListView listView, SQLite_Data_Access.ConnectionString connectionString)
+        private static void UpdateUIStatusBar(StatusBar statusBar, ListView listView)
         {
             // Update all the items in the Status Bar
 
@@ -186,7 +189,7 @@ namespace WeatherAlert_DB
             }
 
             // Handle the first StatusBar Item
-            int NumberOfAllRecords = SQLite_Data_Access.SelectAll_DB(connectionString).Count;
+            int NumberOfAllRecords = SQLite_Data_Access.SelectAll_DB().Count;
             int NumberOfShownRecords = listView.Items.Count;
             ControlsInStatusBar[0].Content = $"Records Shown: {NumberOfShownRecords}/{NumberOfAllRecords}";
 

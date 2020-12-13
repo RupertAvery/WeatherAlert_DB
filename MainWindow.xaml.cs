@@ -27,12 +27,12 @@ namespace WeatherAlert_DB
         /// <summary>
         /// Refresh and Display control data to the user for the entire EventViewer section.
         /// </summary>
-        private void UpdateEventViewUI()
+        public void UpdateEventViewUI()
         {
             UpdateUIElements.PopulateAllEventViewControls(
                 EventView_ListView, EV_EventID_TextBox, EV_DateStart_DatePicker,
                 EV_DateEnd_DatePicker, EV_EventType_ComboBox, EV_State_ComboBox,
-                EV_Keywords_ListBox, Bottom_StatusBar);
+                 EV_Severity_ComboBox,EV_Keywords_ListBox, Bottom_StatusBar);
         }
         private void AddEventsToKeywordCheckBoxs()
         {
@@ -46,14 +46,14 @@ namespace WeatherAlert_DB
         private void ShowUserFirstTimeHelpWindow()
         {
             // Check if user has ran app before, if not then show them the help window.
-            if (!UpdateUIElements.HasUserRanApplicationBefore)
+            if (!Properties.Settings.Default.UserRanAppBefore)
             {
                 InitialHelp_Window initialHelp_Window = new InitialHelp_Window();
                 initialHelp_Window.Owner = this;
                 initialHelp_Window.Show();
 
+                // set the property so the Help window doesnt show again
                 Properties.Settings.Default.UserRanAppBefore = true;
-                UpdateUIElements.HasUserRanApplicationBefore = true;
             }
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -95,7 +95,10 @@ namespace WeatherAlert_DB
         {
             UpdateEventViewUI();
         }
-
+        private void EV_Severity_ComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            UpdateEventViewUI();
+        }
         private void EventView_ListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             // Show the user more info if they double click an alert
@@ -103,10 +106,9 @@ namespace WeatherAlert_DB
             expandedAlertViewer_Window.Owner = this;
             expandedAlertViewer_Window.Show();
         }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             ShowUserFirstTimeHelpWindow();
         }
-    }
+    } 
 }

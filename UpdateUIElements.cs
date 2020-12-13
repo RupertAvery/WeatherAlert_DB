@@ -15,8 +15,6 @@ namespace WeatherAlert_DB
     public class UpdateUIElements
     {
         private static bool IsDispatcherTimerActive = false;
-        public static bool HasUserRanApplicationBefore = Properties.Settings.Default.UserRanAppBefore;
-
         // -------------------------------------------
         // - EVENT VIEWER SECTION                    -
         // -------------------------------------------
@@ -27,7 +25,7 @@ namespace WeatherAlert_DB
         public static void PopulateAllEventViewControls(
             ListView listView, TextBox eventIDTextBox, DatePicker datePickerStart,
             DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox,
-            ListBox keywordsListBox, StatusBar statusBar)
+            ComboBox severityComboBox, ListBox keywordsListBox, StatusBar statusBar)
         {
             // Make sure valid chars are entered in the EventID TextBox.
             // If they are valid, then update and display the controls
@@ -36,17 +34,26 @@ namespace WeatherAlert_DB
             {
                 RefreshAndFilterEventList(listView, eventIDTextBox, datePickerStart,
                                           datePickerEnd, eventTypeComboBox, stateComboBox,
-                                          keywordsListBox);
+                                          severityComboBox ,keywordsListBox);
                 UpdateUIEventType(listView, eventTypeComboBox);
                 UpdateUIStates(stateComboBox);
                 UpdateUIKeywords(keywordsListBox);
+                UpdateUISeverity(listView, severityComboBox);
                 UpdateUIStatusBar(statusBar, listView);
                 ApiLoopHandler.StartApiTimerLoop();
             }
         }
+        /// <summary>
+        /// Tell the Main Window to refresh the event viewer.
+        /// </summary>
+        public static void ForceEventViewerRefresh()
+        {
+            var window = (MainWindow)Application.Current.MainWindow;
+            window.UpdateEventViewUI();
+        }
 
         // -------------------------------------------
-        // - FILTER BY SECTION                       -
+        // - EVENTVIEWER FILTER BY SECTION           -
         // -------------------------------------------
 
         private static void UpdateUIKeywords(ListBox listBox)
@@ -120,22 +127,35 @@ namespace WeatherAlert_DB
             eventIDTextBox.CaretIndex = eventIDTextBox.Text.Length;
             return ContainsValidChars;
         }
-        private static string KeywordStringFromCheckBoxs(ListBox listBox)
+        private static List<string> KeywordsFromCheckBoxs(ListBox listBox)
         {
-            string KeywordString = "";
+            List<string> KeywordCheckBoxStrings = new List<string>();
             foreach (var item in listBox.Items)
             {
                 if (item is CheckBox box && (bool)box.IsChecked)
                 {
-                    KeywordString += box.Content.ToString() + " ";
+                    KeywordCheckBoxStrings.Add(box.Content.ToString());
                 }
             }
-            return KeywordString;
+            return KeywordCheckBoxStrings;
+        }
+        private static void UpdateUISeverity(ListView listView, ComboBox eventTypeComboBox)
+        {
+            // Grab the objects from the current ListView and populate the Severity Type combobox.
+            foreach (var item in listView.Items)
+            {
+                Alert alert = ((Alert)item);
+                if (!eventTypeComboBox.Items.Contains(alert.Severity))
+                {
+                    eventTypeComboBox.Items.Add(alert.Severity);
+                }
+            }
+            AddBlankItemToComboBox(eventTypeComboBox);
         }
         private static void RefreshAndFilterEventList(
             ListView listView, TextBox eventIDTextBox, DatePicker datePickerStart,
             DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox,
-            ListBox keywordsListBox)
+            ComboBox severityComboBox, ListBox keywordsListBox)
         {
             // Make a new list with all the current objects in the DB to reference.
             List<Alert> AlertList = SQLite_Data_Access.SelectAll_DB();
@@ -164,11 +184,18 @@ namespace WeatherAlert_DB
             {
                 AlertList = AlertList.Where(alert => alert.State == ReversedStateDictionary[stateComboBox.Text]).ToList();
             }
-            if (!string.IsNullOrEmpty(KeywordStringFromCheckBoxs(keywordsListBox)))
+            if (!string.IsNullOrEmpty(severityComboBox.Text))
             {
-                AlertList = AlertList.Where(alert => alert.DescriptionKeywords.Contains(KeywordStringFromCheckBoxs(keywordsListBox))).ToList();
+                AlertList = AlertList.Where(alert => alert.Severity == severityComboBox.Text).ToList();
             }
-
+            if (KeywordsFromCheckBoxs(keywordsListBox).Count > 0)
+            {
+                foreach (var word in KeywordsFromCheckBoxs(keywordsListBox))
+                {
+                    AlertList = AlertList.Where(alert => alert.DescriptionKeywords.Contains(word)).ToList();
+                }
+            }
+           
             // Finally add all the Alert objects that were filtered to the ListView
             // And clear old records
             listView.Items.Clear();

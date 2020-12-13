@@ -107,6 +107,9 @@ namespace WeatherAlert_DB
             SQLite_Data_Access.IsUsingDummyDB = true;
             Properties.Settings.Default.UserUsingDummyDB = true;
 
+            // Refresh the Main Window event viewer
+            UpdateUIElements.ForceEventViewerRefresh();
+
             // Log info
             var Log = new LogHandler("Switched to DummyDB.");
             Log.WriteLogFile();
@@ -115,6 +118,10 @@ namespace WeatherAlert_DB
         {
             SQLite_Data_Access.IsUsingDummyDB = false;
             Properties.Settings.Default.UserUsingDummyDB = false;
+
+            // Refresh the Main Window event viewer
+            // Also request the API in 30 sec so user doesnt have to wait 15m to see info.
+            UpdateUIElements.ForceEventViewerRefresh();
             ApiLoopHandler.TriggerTimerIn30sec();
 
             // Log info

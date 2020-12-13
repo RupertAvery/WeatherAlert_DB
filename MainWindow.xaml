@@ -46,6 +46,8 @@
                                 <ComboBox x:Name="EV_EventType_ComboBox" Margin="5,5,5,5" DropDownClosed="EV_EventType_ComboBox_DropDownClosed"/>
                                 <Label Content="State" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
                                 <ComboBox x:Name="EV_State_ComboBox" Margin="5,5,5,5" DropDownClosed="EV_State_ComboBox_DropDownClosed"/>
+                                <Label Content="Severity" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
+                                <ComboBox x:Name="EV_Severity_ComboBox" Margin="5,5,5,5" DropDownClosed="EV_Severity_ComboBox_DropDownClosed"/>
                                 <Label Content="Keywords" HorizontalAlignment="Center" Margin="1,1,1,-10"/>
                                 <ListBox x:Name="EV_Keywords_ListBox" Margin="5,5,5,5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                             </StackPanel>

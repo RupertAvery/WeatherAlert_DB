@@ -141,7 +141,7 @@ namespace WeatherAlert_DB.Database
  values (@Id,@Date,@Time,@EventType,@State,@City,@Severity,@NWSHeadline,@Description,@DescriptionKeywords,@AreaDescription)
  WHERE NOT EXISTS (SELECT Id FROM Alerts WHERE Id = @id)";
                     command.Connection.Open();
-                    var result = (int)command.ExecuteScalar();
+                    var result = (int)command.ExecuteNonQuery();
                     command.Connection.Close();
                     return result == 1;
                 }

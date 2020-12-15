@@ -2,6 +2,7 @@
 using System.Media;
 using System.Windows;
 using System.IO;
+using WeatherAlert_DB.Database;
 
 
 namespace WeatherAlert_DB
@@ -11,12 +12,13 @@ namespace WeatherAlert_DB
     /// </summary>
     public partial class DatabaseOptions : Window
     {
+        private ISQLiteDataAccess sqLiteDataAccess => DatabaseFactory.GetDatabase();
+
         public DatabaseOptions()
         {
             InitializeComponent();
-
-            // If user is wanting to use the DummyDB Force check this box.
-            if (SQLite_Data_Access.IsUsingDummyDB) { DummyDB_Checkbox.IsChecked = true; }
+// If user is wanting to use the DummyDB Force check this box.
+            //if (SQLite_Data_Access.IsUsingDummyDB) { DummyDB_Checkbox.IsChecked = true; }
         }
         private void ImportDB_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -79,7 +81,7 @@ namespace WeatherAlert_DB
                 var Log = new LogHandler("Edit DB called.");
                 Log.WriteLogFile();
 
-                SQLite_Data_Access.UpdateIn_DB("");
+                sqLiteDataAccess.Update(null);
                 this.Close();
             }
         }
@@ -94,7 +96,7 @@ namespace WeatherAlert_DB
             areYouSureDialog.Owner = this;     
             if ((bool)areYouSureDialog.ShowDialog())
             {
-                SQLite_Data_Access.DeleteAllIn_DB();
+                sqLiteDataAccess.DeleteAll();
 
                 // Log info
                 var Log = new LogHandler("WIPED all DB entries.");
@@ -104,7 +106,7 @@ namespace WeatherAlert_DB
         }
         private void DummyDB_Checkbox_Checked(object sender, RoutedEventArgs e)
         {
-            SQLite_Data_Access.IsUsingDummyDB = true;
+            DatabaseFactory.IsUsingDummyDB = true;
             Properties.Settings.Default.UserUsingDummyDB = true;
 
             // Refresh the Main Window event viewer
@@ -116,7 +118,7 @@ namespace WeatherAlert_DB
         }
         private void DummyDB_Checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
-            SQLite_Data_Access.IsUsingDummyDB = false;
+            DatabaseFactory.IsUsingDummyDB = false;
             Properties.Settings.Default.UserUsingDummyDB = false;
 
             // Refresh the Main Window event viewer

@@ -1,61 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WeatherAlert_DB
+namespace WeatherAlert_DB.Database
 {
-    /// <summary>
-    /// This class includes methods to convert the raw json info from the API to construct Alert Objects.
-    /// </summary>
-    public class Alert
+    public class AlertHelper
     {
-        public string Id { get; }
-        public string Date { get; }
-        public string Time { get; }
-        public string EventType { get; }
-        public string State { get; }
-        public string City { get; }
-        public string Severity { get; }
-        public string NWSHeadline { get; }
-        public string Description { get; }
-        public string DescriptionKeywords { get; }
-        public string AreaDescription { get; }
-        public static Dictionary<string, string> StateDictionary { get; } = new Dictionary<string, string> 
+
+        static Dictionary<String, String> ReversedStateDictionary = new Dictionary<string, string>();
+
+        static AlertHelper()
+        {
+            foreach (var state in AlertHelper.StateDictionary)
+            {
+                ReversedStateDictionary.Add(state.Value, state.Key);
+            }
+        }
+
+        public static Dictionary<string, string> StateDictionary { get; } = new Dictionary<string, string>
         { { "AL", "ALABAMA" }, { "AK", "ALASKA" }, { "AZ", "ARIZONA" }, { "AR", "ARKANSAS" },
-          { "CA", "CALIFORNIA" }, { "CO", "COLORADO" }, { "CT", "CONNECTICUT" }, { "DE", "DELAWARE" },
-          { "FL", "FLORIDA" }, { "GA", "GEORGIA" }, { "HI", "HAWAII" }, { "ID", "IDAHO" },
-          { "IL", "ILLINOIS" }, { "IN", "INDIANA" }, { "IA", "IOWA" }, { "KS", "KANSAS" },
-          { "KY", "KENTUCKY" }, { "LA", "LOUISIANA" }, { "ME", "MAINE" }, { "MD", "MARYLAND" },
-          { "MA", "MASSACHUSETTS" }, { "MI", "MICHIGAN" }, { "MN", "MINNESOTA" }, { "MS", "MISSISSIPPI" },
-          { "MO", "MISSOURI" }, { "MT", "MONTANA" }, { "NE", "NEBRASKA" }, { "NV", "NEVADA" },
-          { "NH", "NEW HAMPSHIRE" }, { "NJ", "NEW JERSEY" }, { "NM", "NEW MEXICO" }, { "NY", "NEW YORK" },
-          { "NC", "NORTH CAROLINA" }, { "ND", "NORTH DAKOTA" }, { "OH", "OHIO" }, { "OK", "OKLAHOMA" },
-          { "OR", "OREGON" }, { "PA", "PENNSYLVANIA" }, { "RI", "RHODE ISLAND" }, { "SC", "SOUTH CAROLINA" },
-          { "SD", "SOUTH DAKOTA" }, { "TN", "TENNESSEE" }, { "TX", "TEXAS" }, { "UT", "UTAH" },
-          { "VT", "VERMONT" }, { "VA", "VIRGINIA" }, { "WA", "WASHINGTON" }, { "WV", "WEST VIRGINIA" },
-          { "WI", "WISCONSIN" }, { "WY", "WYOMING" }
+            { "CA", "CALIFORNIA" }, { "CO", "COLORADO" }, { "CT", "CONNECTICUT" }, { "DE", "DELAWARE" },
+            { "FL", "FLORIDA" }, { "GA", "GEORGIA" }, { "HI", "HAWAII" }, { "ID", "IDAHO" },
+            { "IL", "ILLINOIS" }, { "IN", "INDIANA" }, { "IA", "IOWA" }, { "KS", "KANSAS" },
+            { "KY", "KENTUCKY" }, { "LA", "LOUISIANA" }, { "ME", "MAINE" }, { "MD", "MARYLAND" },
+            { "MA", "MASSACHUSETTS" }, { "MI", "MICHIGAN" }, { "MN", "MINNESOTA" }, { "MS", "MISSISSIPPI" },
+            { "MO", "MISSOURI" }, { "MT", "MONTANA" }, { "NE", "NEBRASKA" }, { "NV", "NEVADA" },
+            { "NH", "NEW HAMPSHIRE" }, { "NJ", "NEW JERSEY" }, { "NM", "NEW MEXICO" }, { "NY", "NEW YORK" },
+            { "NC", "NORTH CAROLINA" }, { "ND", "NORTH DAKOTA" }, { "OH", "OHIO" }, { "OK", "OKLAHOMA" },
+            { "OR", "OREGON" }, { "PA", "PENNSYLVANIA" }, { "RI", "RHODE ISLAND" }, { "SC", "SOUTH CAROLINA" },
+            { "SD", "SOUTH DAKOTA" }, { "TN", "TENNESSEE" }, { "TX", "TEXAS" }, { "UT", "UTAH" },
+            { "VT", "VERMONT" }, { "VA", "VIRGINIA" }, { "WA", "WASHINGTON" }, { "WV", "WEST VIRGINIA" },
+            { "WI", "WISCONSIN" }, { "WY", "WYOMING" }
         };
+        
         public static string[] DescriptorWords { get; } =
         {     "FOG", "GALE", "SNOW", "RAIN", "ICE", "STORM",
-              "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE",
-              "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE",
-              "SLUSH", "ADVISORY", "SLEET", "FREEZING", "CLOUDY", 
-              "WATER LEVEL", "WAVE", "SHOWER", "THUNDER", "LIGHTNING",
-              "SURF", "THUNDERSTORM"
+            "EARTHQUAKE", "TORNADO", "FLOOD", "HURRICANE", "CYCLONE",
+            "BLIZZARD", "HAIL", "WIND", "DUST", "FIRE", "WILDFIRE",
+            "SLUSH", "ADVISORY", "SLEET", "FREEZING", "CLOUDY",
+            "WATER LEVEL", "WAVE", "SHOWER", "THUNDER", "LIGHTNING",
+            "SURF", "THUNDERSTORM"
         };
-        public Alert(string id, string date, string time, string eventType, string state, string city, string severity, string nwsHeadline, string description, string descriptionKeywords, string areaDescription)
-        {
-            Id = id;
-            Date = date;
-            Time = time;
-            EventType = eventType;
-            State = state;
-            City = city;
-            Severity = severity;
-            NWSHeadline = nwsHeadline;
-            Description = description;
-            DescriptionKeywords = descriptionKeywords;
-            AreaDescription = areaDescription;
-        }
+
         /// <summary>
         /// Converts the raw ID from the API into the correct format for the DB. Json tag: "@id"
         /// </summary>
@@ -85,7 +70,7 @@ namespace WeatherAlert_DB
         public static string ParseTime(string sent)
         {
             int numOfCharsToRemove = sent.LastIndexOf('T');
-            return sent.Remove(0,numOfCharsToRemove + 1).Trim(',');
+            return sent.Remove(0, numOfCharsToRemove + 1).Trim(',');
         }
         /// <summary>
         /// Converts the raw State from the API into the correct format for the DB. Json tag: "senderName"
@@ -123,7 +108,7 @@ namespace WeatherAlert_DB
         /// <returns>Truncated City as a string.</returns>
         public static string ParseCity(string senderName)
         {
-            senderName = senderName.Remove(0,16).Trim(',');
+            senderName = senderName.Remove(0, 16).Trim(',');
             int NumOfCharsUntilState = senderName.LastIndexOf(' ');
             senderName = senderName.Substring(0, NumOfCharsUntilState);
             return senderName.ToUpper();
@@ -135,7 +120,7 @@ namespace WeatherAlert_DB
         /// <returns>Truncated Description as a string.</returns>
         public static string ParseDescription(string description)
         {
-            return description.Remove(0,13).Trim(',');
+            return description.Remove(0, 13).Trim(',');
         }
 
         /// <summary>
@@ -173,7 +158,7 @@ namespace WeatherAlert_DB
         /// <returns>Truncated NWSHeadline as a string.</returns>
         public static string ParseNWSHeadline(string NWSheadline)
         {
-            return NWSheadline.Remove(0,13).Trim(',');
+            return NWSheadline.Remove(0, 13).Trim(',');
         }
         /// <summary>
         /// Converts the raw Severity into the correct format for the DB. Json tag: "severity"
@@ -182,7 +167,7 @@ namespace WeatherAlert_DB
         /// <returns>Truncated Severity as a string.</returns>
         public static string ParseSeverity(string severity)
         {
-            return severity.Remove(0,10).Trim(',');
+            return severity.Remove(0, 10).Trim(',');
         }
         /// <summary>
         /// Converts the raw EventType into the correct format for the DB. Json tag: "event"
@@ -222,5 +207,39 @@ namespace WeatherAlert_DB
             }
             return ReturnedString;
         }
+    }
+
+    /// <summary>
+    /// This class includes methods to convert the raw json info from the API to construct Alert Objects.
+    /// </summary>
+    public class Alert
+    {
+        public string Id { get; }
+        public string Date { get; }
+        public string Time { get; }
+        public string EventType { get; }
+        public string State { get; }
+        public string City { get; }
+        public string Severity { get; }
+        public string NWSHeadline { get; }
+        public string Description { get; }
+        public string DescriptionKeywords { get; }
+        public string AreaDescription { get; }
+ 
+        public Alert(string id, string date, string time, string eventType, string state, string city, string severity, string nwsHeadline, string description, string descriptionKeywords, string areaDescription)
+        {
+            Id = id;
+            Date = date;
+            Time = time;
+            EventType = eventType;
+            State = state;
+            City = city;
+            Severity = severity;
+            NWSHeadline = nwsHeadline;
+            Description = description;
+            DescriptionKeywords = descriptionKeywords;
+            AreaDescription = areaDescription;
+        }
+       
     }
 }

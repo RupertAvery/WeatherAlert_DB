@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Configuration;
 using System.Timers;
+using System.Windows.Forms;
+using WeatherAlert_DB.Database;
+using Timer = System.Timers.Timer;
 
 namespace WeatherAlert_DB
 {
     /// <summary>
     /// This class handles the GET Request Logic on a timer event.
     /// </summary>
-    static class ApiLoopHandler
-    { 
+    static public class ApiLoopHandler
+    {
+        private static ISQLiteDataAccess sqLiteDataAccess => DatabaseFactory.GetDatabase();
+
         // Declare a single repeating timer to request the NWS Api after the elapsed time
         private static Timer ApiTimer = new Timer(900000);
         public static TimeSpan ApiTimeSpan = new TimeSpan(0, 0, 0, 0, (int)ApiTimer.Interval);
@@ -16,7 +22,7 @@ namespace WeatherAlert_DB
         {
             // Check if user is using DummyDb instead. 
             // If so prevent API Calls here.
-            if (!SQLite_Data_Access.IsUsingDummyDB)
+            if (!DatabaseFactory.IsUsingDummyDB)
             {
                 while (SyncInfoToDB())
                 {
@@ -86,54 +92,54 @@ namespace WeatherAlert_DB
                     if (AlertInfoList[CurrentIndex].StartsWith("@id:") && !HasIdAlreadyBeenFound)
                     {
                         // Grab ID
-                        ValuesForObjectInstantiation[0] = Alert.ParseID(AlertInfoList[0]);
+                        ValuesForObjectInstantiation[0] = AlertHelper.ParseID(AlertInfoList[0]);
                         HasIdAlreadyBeenFound = true;
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("areaDesc:"))
                     {
                         // Grab Area Description
-                        ValuesForObjectInstantiation[10] = Alert.ParseAreaDescription(AlertInfoList[1]);
+                        ValuesForObjectInstantiation[10] = AlertHelper.ParseAreaDescription(AlertInfoList[1]);
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("sent:"))
                     {
                         // Grab Date & Time
-                        ValuesForObjectInstantiation[1] = Alert.ParseDate(AlertInfoList[2]);
-                        ValuesForObjectInstantiation[2] = Alert.ParseTime(AlertInfoList[2]);
+                        ValuesForObjectInstantiation[1] = AlertHelper.ParseDate(AlertInfoList[2]);
+                        ValuesForObjectInstantiation[2] = AlertHelper.ParseTime(AlertInfoList[2]);
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("severity:"))
                     {
                         // Grab Severity
-                        ValuesForObjectInstantiation[6] = Alert.ParseSeverity(AlertInfoList[3]);
+                        ValuesForObjectInstantiation[6] = AlertHelper.ParseSeverity(AlertInfoList[3]);
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("event:"))
                     {
                         // Grab Event
-                        ValuesForObjectInstantiation[3] = Alert.ParseEvent(AlertInfoList[4]);
+                        ValuesForObjectInstantiation[3] = AlertHelper.ParseEvent(AlertInfoList[4]);
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("senderName:"))
                     {
                         // Grab State & City
-                        ValuesForObjectInstantiation[4] = Alert.ParseState(AlertInfoList[5]);
-                        ValuesForObjectInstantiation[5] = Alert.ParseCity(AlertInfoList[5]);
+                        ValuesForObjectInstantiation[4] = AlertHelper.ParseState(AlertInfoList[5]);
+                        ValuesForObjectInstantiation[5] = AlertHelper.ParseCity(AlertInfoList[5]);
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("description:"))
                     {
-                        ValuesForObjectInstantiation[8] = Alert.ParseDescription(AlertInfoList[6]);
-                        ValuesForObjectInstantiation[9] += Alert.ParseForDescriptiveKeywords(AlertInfoList[6]);
+                        ValuesForObjectInstantiation[8] = AlertHelper.ParseDescription(AlertInfoList[6]);
+                        ValuesForObjectInstantiation[9] += AlertHelper.ParseForDescriptiveKeywords(AlertInfoList[6]);
                         LinesTriggered++;
                     }
                     else if (AlertInfoList[CurrentIndex].StartsWith("NWSheadline:"))
                     {
                         WasThereA_NwsHeadline = true;
                         // Grab NwsHeadline & DescriptionKeywords
-                        ValuesForObjectInstantiation[7] = Alert.ParseNWSHeadline(AlertInfoList[7]);
-                        ValuesForObjectInstantiation[9] += Alert.ParseForDescriptiveKeywords(AlertInfoList[7]);                           
+                        ValuesForObjectInstantiation[7] = AlertHelper.ParseNWSHeadline(AlertInfoList[7]);
+                        ValuesForObjectInstantiation[9] += AlertHelper.ParseForDescriptiveKeywords(AlertInfoList[7]);                           
                         LinesTriggered++;
                     }
                 }
@@ -144,10 +150,10 @@ namespace WeatherAlert_DB
                     Alert alert = new Alert(ValuesForObjectInstantiation[0], ValuesForObjectInstantiation[1],
                         ValuesForObjectInstantiation[2], ValuesForObjectInstantiation[3], ValuesForObjectInstantiation[4],
                         ValuesForObjectInstantiation[5], ValuesForObjectInstantiation[6], ValuesForObjectInstantiation[7],
-                        ValuesForObjectInstantiation[8], Alert.CleanDescriptiveKeywords(ValuesForObjectInstantiation[9]), ValuesForObjectInstantiation[10]);
+                        ValuesForObjectInstantiation[8], AlertHelper.CleanDescriptiveKeywords(ValuesForObjectInstantiation[9]), ValuesForObjectInstantiation[10]);
 
                     // Construct the objects and for each skipped object out it to log
-                    if (!SQLite_Data_Access.InsertIn_DB(alert))
+                    if (!sqLiteDataAccess.Insert(alert))
                     {
                         AlertLog.LogMessage += $" ,{ValuesForObjectInstantiation[0]}";
                         AlertLog.NumOfObjects++;
@@ -170,10 +176,10 @@ namespace WeatherAlert_DB
                     Alert alert = new Alert(ValuesForObjectInstantiation[0], ValuesForObjectInstantiation[1],
                         ValuesForObjectInstantiation[2], ValuesForObjectInstantiation[3], ValuesForObjectInstantiation[4],
                         ValuesForObjectInstantiation[5], ValuesForObjectInstantiation[6], ValuesForObjectInstantiation[7],
-                        ValuesForObjectInstantiation[8], Alert.CleanDescriptiveKeywords(ValuesForObjectInstantiation[9]), ValuesForObjectInstantiation[10]);
+                        ValuesForObjectInstantiation[8], AlertHelper.CleanDescriptiveKeywords(ValuesForObjectInstantiation[9]), ValuesForObjectInstantiation[10]);
 
                     // Construct the objects and for each skipped object out it to log
-                    if (!SQLite_Data_Access.InsertIn_DB(alert))
+                    if (!sqLiteDataAccess.Insert(alert))
                     {
                         AlertLog.LogMessage += $" {ValuesForObjectInstantiation[0]},";
                         AlertLog.NumOfObjects++;

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
+using WeatherAlert_DB.Database;
 
 namespace WeatherAlert_DB
 {
@@ -18,6 +19,8 @@ namespace WeatherAlert_DB
         // -------------------------------------------
         // - EVENT VIEWER SECTION                    -
         // -------------------------------------------
+
+        private static ISQLiteDataAccess sqLiteDataAccess => DatabaseFactory.GetDatabase();
 
         /// <summary>
         /// This updates all the controls in the MainWindow for the EventViewer section.
@@ -43,6 +46,7 @@ namespace WeatherAlert_DB
                 ApiLoopHandler.StartApiTimerLoop();
             }
         }
+
         /// <summary>
         /// Tell the Main Window to refresh the event viewer.
         /// </summary>
@@ -61,7 +65,7 @@ namespace WeatherAlert_DB
             // This section adds checkboxes to the empty listbox in the FilterBy Keywords section
             if (listBox.Items.Count == 0)
             {
-                foreach (var keyword in Alert.DescriptorWords)
+                foreach (var keyword in AlertHelper.DescriptorWords)
                 {
                     CheckBox checkBox = new CheckBox();
                     checkBox.Content = keyword;
@@ -69,15 +73,17 @@ namespace WeatherAlert_DB
                 }
             }
         }
+
         private static void UpdateUIStates(ComboBox statesComboBox)
         {
             // Populate the combobox with all the states names
-            foreach (var State in Alert.StateDictionary.Values)
+            foreach (var State in AlertHelper.StateDictionary.Values)
             {
                 statesComboBox.Items.Add(State);
             }
             AddBlankItemToComboBox(statesComboBox);
         }
+
         private static void AddBlankItemToComboBox(ComboBox comboBox)
         {
             // Adds a blank entry for user to deselect the filter at the top of the combobox
@@ -89,6 +95,7 @@ namespace WeatherAlert_DB
                 }
             }
         }
+
         private static void UpdateUIEventType(ListView listView, ComboBox eventTypeComboBox)
         {
             // Grab the objects from the current ListView and populate the Event Type combobox.
@@ -102,6 +109,7 @@ namespace WeatherAlert_DB
             }
             AddBlankItemToComboBox(eventTypeComboBox);
         }
+
         private static bool EnsureValidCharsInEventIDTextBox(TextBox eventIDTextBox)
         {
             // Ensure that only valid chars are entered. 
@@ -139,6 +147,7 @@ namespace WeatherAlert_DB
             }
             return KeywordCheckBoxStrings;
         }
+
         private static void UpdateUISeverity(ListView listView, ComboBox eventTypeComboBox)
         {
             // Grab the objects from the current ListView and populate the Severity Type combobox.
@@ -152,50 +161,35 @@ namespace WeatherAlert_DB
             }
             AddBlankItemToComboBox(eventTypeComboBox);
         }
+
         private static void RefreshAndFilterEventList(
             ListView listView, TextBox eventIDTextBox, DatePicker datePickerStart,
             DatePicker datePickerEnd, ComboBox eventTypeComboBox, ComboBox stateComboBox,
             ComboBox severityComboBox, ListBox keywordsListBox)
         {
             // Make a new list with all the current objects in the DB to reference.
-            List<Alert> AlertList = SQLite_Data_Access.SelectAll_DB();
 
             // Make a reversed StateDictionary to compare the values to the keys
             Dictionary<String, String> ReversedStateDictionary = new Dictionary<string, string>();
-            foreach (var state in Alert.StateDictionary)
+            foreach (var state in AlertHelper.StateDictionary)
             {
                 ReversedStateDictionary.Add(state.Value, state.Key);
             }
 
-            // Build LINQ query based on current values
-            if (!string.IsNullOrEmpty(eventIDTextBox.Text))
+            var alertFilter = new AlertFilter
             {
-                AlertList = AlertList.Where(alert => alert.Id.Contains(eventIDTextBox.Text)).ToList();
-            }
-            if (datePickerStart.SelectedDate != null && datePickerEnd.SelectedDate != null)
-            {
-                AlertList = AlertList.Where(alert => DateTime.Parse(alert.Date) >= datePickerStart.SelectedDate && DateTime.Parse(alert.Date) <= datePickerEnd.SelectedDate).ToList();
-            }
-            if (!string.IsNullOrEmpty(eventTypeComboBox.Text))
-            {
-                AlertList = AlertList.Where(alert => alert.EventType == eventTypeComboBox.Text).ToList();
-            }
-            if (!string.IsNullOrEmpty(stateComboBox.Text))
-            {
-                AlertList = AlertList.Where(alert => alert.State == ReversedStateDictionary[stateComboBox.Text]).ToList();
-            }
-            if (!string.IsNullOrEmpty(severityComboBox.Text))
-            {
-                AlertList = AlertList.Where(alert => alert.Severity == severityComboBox.Text).ToList();
-            }
-            if (KeywordsFromCheckBoxs(keywordsListBox).Count > 0)
-            {
-                foreach (var word in KeywordsFromCheckBoxs(keywordsListBox))
-                {
-                    AlertList = AlertList.Where(alert => alert.DescriptionKeywords.Contains(word)).ToList();
-                }
-            }
-           
+                EventID = eventIDTextBox.Text,
+                StartDate = datePickerStart.SelectedDate,
+                EndDate = datePickerEnd.SelectedDate,
+                EventType = eventTypeComboBox.Text,
+                State = string.IsNullOrEmpty(stateComboBox.Text) ? null : ReversedStateDictionary[stateComboBox.Text],
+                Severity = severityComboBox.Text,
+                Keywords = KeywordsFromCheckBoxs(keywordsListBox)
+            };
+
+            IEnumerable<Alert> AlertList = sqLiteDataAccess.Select(alertFilter);
+
+
             // Finally add all the Alert objects that were filtered to the ListView
             // And clear old records
             listView.Items.Clear();
@@ -204,6 +198,7 @@ namespace WeatherAlert_DB
                 listView.Items.Add(Alert);
             }
         }
+
         private static void UpdateUIStatusBar(StatusBar statusBar, ListView listView)
         {
             // Update all the items in the Status Bar
@@ -216,7 +211,7 @@ namespace WeatherAlert_DB
             }
 
             // Handle the first StatusBar Item
-            int NumberOfAllRecords = SQLite_Data_Access.SelectAll_DB().Count;
+            int NumberOfAllRecords = (int)sqLiteDataAccess.Count();
             int NumberOfShownRecords = listView.Items.Count;
             ControlsInStatusBar[0].Content = $"Records Shown: {NumberOfShownRecords}/{NumberOfAllRecords}";
 
@@ -244,7 +239,7 @@ namespace WeatherAlert_DB
         private static void UpdateStatusBarSyncTimer(StatusBarItem statusBarItem)
         {
             // Check if the user is using the DummyDB before displaying StatusBar Sync info to user
-            if (!SQLite_Data_Access.IsUsingDummyDB)
+            if (!DatabaseFactory.IsUsingDummyDB)
             {
                 // Checks the ApiTimeSpan status and updates the Statusbar item with info on the Sync Status
                 // The timespan gets set to -1 if the DB is syncing

@@ -126,17 +126,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Database\DatabaseFactory.cs" />
+    <Compile Include="Database\DebugSQLiteDataAccess.cs" />
     <Compile Include="ExpandedAlertViewer_Window.xaml.cs">
       <DependentUpon>ExpandedAlertViewer_Window.xaml</DependentUpon>
     </Compile>
     <Compile Include="InitialHelp_Window.xaml.cs">
       <DependentUpon>InitialHelp_Window.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Database\ISQLiteDataAccess.cs" />
+    <Compile Include="Database\LiveSQLiteDataAccess.cs" />
     <Compile Include="LogHandler.cs" />
     <Compile Include="ApiLoopHandler.cs" />
     <Compile Include="NWS_ApiController.cs" />
+    <Compile Include="Database\SQLiteDataAccess.cs" />
     <Compile Include="UpdateUIElements.cs" />
-    <Compile Include="SQLite_Data_Access.cs" />
+    <Compile Include="Database\AlertFilter.cs" />
     <Page Include="ExpandedAlertViewer_Window.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -157,7 +162,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Alert.cs" />
+    <Compile Include="Database\Alert.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -206,6 +211,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
